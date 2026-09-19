@@ -1,14 +1,4 @@
-interface DomainReadiness {
-  id: number
-  romanNumeral: string
-  title: string
-  weightMin: number
-  weightMax: number
-  readiness: number
-  completedPis: number
-  totalPis: number
-  avgConfidence: number
-}
+import type { DomainReadiness } from '@/types/dashboard'
 
 export function DomainReadinessCard({ domain }: { domain: DomainReadiness }) {
   const color =

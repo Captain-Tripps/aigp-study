@@ -3,33 +3,11 @@
 import { useEffect, useState } from 'react'
 import { DomainReadinessCard } from '@/components/dashboard/DomainReadinessCard'
 import { ModuleProgressRing } from '@/components/dashboard/ModuleProgressRing'
-
-interface DomainReadiness {
-  id: number
-  romanNumeral: string
-  title: string
-  weightMin: number
-  weightMax: number
-  readiness: number
-  completedPis: number
-  totalPis: number
-  avgConfidence: number
-}
-
-interface ModuleProgress {
-  id: number
-  number: number
-  title: string
-  completion: number
-  completedPis: number
-  totalPis: number
-  avgConfidence: number
-}
+import type { DomainReadiness, ModuleProgress } from '@/types/dashboard'
 
 interface DashboardData {
   domains: DomainReadiness[]
   modules: ModuleProgress[]
-  streak: number
   nextActions: string[]
 }
 

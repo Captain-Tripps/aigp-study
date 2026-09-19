@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '../../../../lib/prisma'
+import { prisma } from '@/lib/prisma'
+import type { DomainReadiness, ModuleProgress } from '@/types/dashboard'
 
 export async function GET() {
   const domains = await prisma.examDomain.findMany({
@@ -12,7 +13,7 @@ export async function GET() {
     },
   })
 
-  const domainReadiness = domains.map((d) => {
+  const domainReadiness: DomainReadiness[] = domains.map((d) => {
     const pis = d.competencies.flatMap((c) => c.performanceIndicators)
     const totalPis = pis.length
     const completedPis = pis.filter((pi) => pi.userProgress?.status === 'done').length
@@ -43,7 +44,7 @@ export async function GET() {
     },
   })
 
-  const moduleProgress = modules.map((m) => {
+  const moduleProgress: ModuleProgress[] = modules.map((m) => {
     const pis = m.competencies.flatMap((c) => c.performanceIndicators)
     const totalPis = pis.length
     const completedPis = pis.filter((pi) => pi.userProgress?.status === 'done').length
@@ -69,7 +70,6 @@ export async function GET() {
   return NextResponse.json({
     domains: domainReadiness,
     modules: moduleProgress,
-    streak: 0,
     nextActions,
   })
 }

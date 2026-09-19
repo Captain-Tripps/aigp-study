@@ -1,12 +1,4 @@
-interface ModuleProgress {
-  id: number
-  number: number
-  title: string
-  completion: number
-  completedPis: number
-  totalPis: number
-  avgConfidence: number
-}
+import type { ModuleProgress } from '@/types/dashboard'
 
 export function ModuleProgressRing({ module }: { module: ModuleProgress }) {
   const radius = 36
