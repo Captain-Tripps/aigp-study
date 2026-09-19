@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../dev.db"
+}
+
+model TrainingModule {
+  id           Int      @id @default(autoincrement())
+  number       Int      @unique
+  title        String
+  description  String
+  sortOrder    Int      @default(0)
+  competencies Competency[]
+  examDomains  ExamDomainToModule[]
+  questions    Question[]
+}
+
+model ExamDomain {
+  id             Int                  @id @default(autoincrement())
+  romanNumeral   String               @unique
+  title          String
+  weightMin      Int
+  weightMax      Int
+  description    String
+  modules        ExamDomainToModule[]
+  competencies   Competency[]
+  questions      Question[]
+}
+
+model ExamDomainToModule {
+  examDomainId Int
+  trainingModuleId Int
+  examDomain     ExamDomain     @relation(fields: [examDomainId], references: [id])
+  trainingModule TrainingModule @relation(fields: [trainingModuleId], references: [id])
+  @@id([examDomainId, trainingModuleId])
+}
+
+model Competency {
+  id                    Int                    @id @default(autoincrement())
+  code                  String                 @unique
+  title                 String
+  description           String
+  trainingModuleId      Int
+  trainingModule        TrainingModule         @relation(fields: [trainingModuleId], references: [id])
+  examDomainId          Int
+  examDomain            ExamDomain             @relation(fields: [examDomainId], references: [id])
+  performanceIndicators PerformanceIndicator[]
+}
+
+model PerformanceIndicator {
+  id            Int            @id @default(autoincrement())
+  code          String         @unique
+  description   String
+  competencyId  Int
+  competency    Competency     @relation(fields: [competencyId], references: [id])
+  contentChunks ContentChunk[]
+  questions     Question[]
+  flashcards    Flashcard[]
+  userProgress  UserProgress?
+}
+
+model ContentChunk {
+  id                     Int                  @id @default(autoincrement())
+  performanceIndicatorId Int
+  performanceIndicator   PerformanceIndicator @relation(fields: [performanceIndicatorId], references: [id])
+  type                   String
+  title                  String
+  content                String
+  sourcePage             Int?
+  sourceUrl              String?
+  sourceType             String               @default("pdf")
+  isEdited               Boolean              @default(false)
+  editedContent          String?
+  editedAt               DateTime?
+  metadata               String?
+}
+
+model UserProgress {
+  id                     Int                  @id @default(autoincrement())
+  performanceIndicatorId Int                  @unique
+  performanceIndicator   PerformanceIndicator @relation(fields: [performanceIndicatorId], references: [id])
+  status                 String               @default("not_started")
+  confidence             Int                  @default(0)
+  lastReviewed           DateTime?
+  reviewCount            Int                  @default(0)
+  easeFactor             Float                @default(2.5)
+  interval               Int                  @default(0)
+  nextReviewDate         DateTime?
+}
+
+model Question {
+  id                     Int                  @id @default(autoincrement())
+  text                   String
+  options                String
+  correctAnswer          Int
+  explanation            String
+  source                 String
+  performanceIndicatorId Int?
+  performanceIndicator   PerformanceIndicator? @relation(fields: [performanceIndicatorId], references: [id])
+  examDomainId           Int
+  examDomain             ExamDomain           @relation(fields: [examDomainId], references: [id])
+  trainingModuleId       Int?
+  trainingModule         TrainingModule?      @relation(fields: [trainingModuleId], references: [id])
+  difficulty             String               @default("medium")
+  attempts               QuestionAttempt[]
+}
+
+model QuestionAttempt {
+  id         Int      @id @default(autoincrement())
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id])
+  selectedAnswer Int
+  wasCorrect Boolean
+  answeredAt DateTime @default(now())
+}
+
+model Flashcard {
+  id                     Int                  @id @default(autoincrement())
+  front                  String
+  back                   String
+  performanceIndicatorId Int
+  performanceIndicator   PerformanceIndicator @relation(fields: [performanceIndicatorId], references: [id])
+  easeFactor             Float                @default(2.5)
+  interval               Int                  @default(0)
+  nextReviewDate         DateTime?
+  reviewCount            Int                  @default(0)
+}
+
+model StudyPlan {
+  id             Int      @id @default(autoincrement())
+  examDate       DateTime
+  weeklyHours    Int
+  startDate      DateTime
+  moduleSchedule String
+  domainTargets  String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
