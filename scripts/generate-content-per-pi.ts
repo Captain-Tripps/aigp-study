@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prisma'
 
-const LLM_URL = process.env.LLM_URL || 'http://localhost:8080/v1/chat/completions'
+const LLM_URL = process.env.LLM_URL || 'http://100.125.83.77:8080/v1/chat/completions'
 const LLM_MODEL = process.env.LLM_MODEL || 'gpt-oss-120b'
 
 const DRY_RUN = process.argv.includes('--dry-run')
