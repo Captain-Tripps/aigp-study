@@ -23,8 +23,10 @@ export default function PracticePage() {
   const [module, setModule] = useState('')
   const [difficulty, setDifficulty] = useState('')
   const [answered, setAnswered] = useState<{ correct: number; total: number }>({ correct: 0, total: 0 })
+  const [loading, setLoading] = useState(true)
 
   const loadQuestions = useCallback(async () => {
+    setLoading(true)
     const params = new URLSearchParams()
     if (domain) params.set('domain', domain)
     if (module) params.set('module', module)
@@ -34,6 +36,7 @@ export default function PracticePage() {
     setQuestions(data.questions)
     setCurrentIndex(0)
     setAnswered({ correct: 0, total: 0 })
+    setLoading(false)
   }, [domain, module, difficulty])
 
   useEffect(() => { loadQuestions() }, [loadQuestions])
@@ -110,7 +113,7 @@ export default function PracticePage() {
         </div>
       ) : (
         <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
-          {questions.length === 0 ? 'No questions found for the selected filters.' : 'Loading...'}
+          {loading ? 'Loading...' : 'No questions found for the selected filters.'}
         </div>
       )}
     </div>

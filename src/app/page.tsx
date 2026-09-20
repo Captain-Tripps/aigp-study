@@ -13,16 +13,34 @@ interface DashboardData {
 
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = () => {
+    setError(null)
     fetch('/api/dashboard')
-      .then((res) => res.json())
-      .then(setData)
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => null)
+          setError(err?.error || `Failed to load (HTTP ${res.status})`)
+          return
+        }
+        setData(await res.json())
+      })
       .catch((e) => setError(e.message))
-  }, [])
+  }
 
-  if (error) return <p className="text-red-500">Error: {error}</p>
+  useEffect(() => { load() }, [])
+
+  if (error) {
+    return (
+      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
+        <p className="text-red-600">{error}</p>
+        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+          Retry
+        </button>
+      </div>
+    )
+  }
   if (!data) return <p className="text-gray-500">Loading...</p>
 
   return (

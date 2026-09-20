@@ -25,6 +25,7 @@ export default function PlannerPage() {
   const [weeklyHours, setWeeklyHours] = useState(10)
   const [plan, setPlan] = useState<PlanData | null>(null)
   const [loading, setLoading] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(true)
 
   const generate = async () => {
     if (!examDate) return
@@ -43,6 +44,7 @@ export default function PlannerPage() {
     fetch('/api/planner')
       .then((r) => r.json())
       .then((data) => { if (data) setPlan(data) })
+      .finally(() => setInitialLoading(false))
   }, [])
 
   return (
@@ -82,7 +84,15 @@ export default function PlannerPage() {
         </button>
       </div>
 
-      {plan && <CalendarView weeks={plan.weeks} />}
+      {plan ? (
+        <CalendarView weeks={plan.weeks} />
+      ) : initialLoading ? (
+        <p className="text-gray-500">Loading...</p>
+      ) : (
+        <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+          Generate a plan to get started.
+        </div>
+      )}
     </div>
   )
 }

@@ -11,13 +11,34 @@ export default function ModuleDetailPage() {
   const { number } = useParams()
   const [module, setModule] = useState<ModuleDetail | null>(null)
   const [selectedPI, setSelectedPI] = useState<PIDetail | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = () => {
+    setError(null)
     fetch(`/api/study/modules/${number}`)
-      .then((r) => r.json())
-      .then(setModule)
-  }, [number])
+      .then(async (r) => {
+        if (!r.ok) {
+          const err = await r.json().catch(() => null)
+          setError(err?.error || `Failed to load (HTTP ${r.status})`)
+          return
+        }
+        setModule(await r.json())
+      })
+      .catch((e) => setError(e.message))
+  }
 
+  useEffect(() => { load() }, [number])
+
+  if (error) {
+    return (
+      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
+        <p className="text-red-600">{error}</p>
+        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+          Retry
+        </button>
+      </div>
+    )
+  }
   if (!module) return <p className="text-gray-500">Loading...</p>
 
   return (
@@ -38,17 +59,23 @@ export default function ModuleDetailPage() {
         </div>
         <div className="lg:col-span-2">
           {selectedPI ? (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">
-                <span className="font-mono text-indigo-600">{selectedPI.code}</span> — {selectedPI.description}
-              </h2>
-              <ContentPanel chunks={selectedPI.chunks} />
-              <ProgressActions
-                piId={selectedPI.id}
-                progress={selectedPI.progress}
-                onUpdated={(p) => setSelectedPI((prev) => prev ? { ...prev, progress: p } : null)}
-              />
-            </div>
+            selectedPI.chunks.length === 0 ? (
+              <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+                No content yet. Add study content for this performance indicator.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">
+                  <span className="font-mono text-indigo-600">{selectedPI.code}</span> — {selectedPI.description}
+                </h2>
+                <ContentPanel chunks={selectedPI.chunks} />
+                <ProgressActions
+                  piId={selectedPI.id}
+                  progress={selectedPI.progress}
+                  onUpdated={(p) => setSelectedPI((prev) => prev ? { ...prev, progress: p } : null)}
+                />
+              </div>
+            )
           ) : (
             <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
               Select a performance indicator to view content

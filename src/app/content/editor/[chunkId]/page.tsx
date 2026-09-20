@@ -34,11 +34,18 @@ export default function ContentEditorPage() {
   const [editedContent, setEditedContent] = useState('')
   const [metadata, setMetadata] = useState<Metadata>({})
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = () => {
+    setError(null)
     fetch(`/api/content/${chunkId}`)
-      .then((r) => r.json())
-      .then((data) => {
+      .then(async (r) => {
+        if (!r.ok) {
+          const err = await r.json().catch(() => null)
+          setError(err?.error || `Failed to load (HTTP ${r.status})`)
+          return
+        }
+        const data = await r.json()
         setChunk(data)
         setEditedContent(data.editedContent || data.content)
         if (data.metadata) {
@@ -49,7 +56,10 @@ export default function ContentEditorPage() {
           }
         }
       })
-  }, [chunkId])
+      .catch((e) => setError(e.message))
+  }
+
+  useEffect(() => { load() }, [chunkId])
 
   const save = async () => {
     if (!chunk) return
@@ -62,6 +72,16 @@ export default function ContentEditorPage() {
     setSaving(false)
   }
 
+  if (error) {
+    return (
+      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
+        <p className="text-red-600">{error}</p>
+        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+          Retry
+        </button>
+      </div>
+    )
+  }
   if (!chunk) return <p className="text-gray-500">Loading...</p>
 
   return (
