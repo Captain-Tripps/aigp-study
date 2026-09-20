@@ -27,10 +27,10 @@ export function CardFlip({
   const flip = () => setRevealed(!revealed)
 
   const ratings = [
-    { label: 'Again', quality: 0, color: '!bg-clay-danger' },
-    { label: 'Hard', quality: 3, color: '!bg-clay-warning' },
-    { label: 'Good', quality: 4, color: '!bg-clay-success' },
-    { label: 'Easy', quality: 5, color: '!bg-clay-primary' },
+    { label: 'Again', quality: 0, variant: 'clay-btn-danger' },
+    { label: 'Hard', quality: 3, variant: 'clay-btn-warning' },
+    { label: 'Good', quality: 4, variant: 'clay-btn-success' },
+    { label: 'Easy', quality: 5, variant: 'clay-btn-easy' },
   ]
 
   return (
@@ -59,7 +59,7 @@ export function CardFlip({
             <button
               key={r.quality}
               onClick={() => onRate(r.quality)}
-              className={`clay-btn ${r.color}`}
+              className={r.variant}
             >
               {r.label}
             </button>

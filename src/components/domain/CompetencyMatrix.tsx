@@ -4,7 +4,7 @@ type CompetencyRow = DomainDetail['competencies'][number]
 
 export function CompetencyMatrix({ competencies }: { competencies: CompetencyRow[] }) {
   return (
-    <div className="overflow-x-auto rounded-clay bg-white">
+    <div className="clay-card overflow-x-auto p-0">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b bg-clay-primary/5 text-left text-xs font-medium text-clay-text/50">
