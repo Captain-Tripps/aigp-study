@@ -40,13 +40,13 @@ export function ProgressActions({
   }
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border bg-white p-3">
+    <div className="clay-card-sm flex items-center gap-4">
       <div>
-        <label className="text-xs font-medium text-gray-600">Status</label>
+        <label className="text-xs font-medium text-clay-text/70">Status</label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="ml-2 rounded border px-2 py-1 text-sm"
+          className="ml-2 clay-input"
         >
           <option value="not_started">Not started</option>
           <option value="in_progress">In progress</option>
@@ -54,7 +54,7 @@ export function ProgressActions({
         </select>
       </div>
       <div>
-        <label className="text-xs font-medium text-gray-600">Confidence</label>
+        <label className="text-xs font-medium text-clay-text/70">Confidence</label>
         <input
           type="range"
           min="0"
@@ -63,16 +63,16 @@ export function ProgressActions({
           onChange={(e) => setConfidence(parseInt(e.target.value, 10))}
           className="ml-2 w-24"
         />
-        <span className="ml-1 text-sm font-medium">{confidence}/5</span>
+        <span className="ml-1 text-sm font-medium text-clay-text">{confidence}/5</span>
       </div>
       <button
         onClick={save}
         disabled={saving}
-        className="rounded bg-indigo-600 px-3 py-1 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+        className="clay-btn"
       >
         {saving ? 'Saving...' : 'Save'}
       </button>
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-clay-danger text-sm">{error}</p>}
     </div>
   )
 }

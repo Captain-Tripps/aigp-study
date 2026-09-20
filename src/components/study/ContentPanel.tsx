@@ -6,7 +6,7 @@ import type { ChunkDetail } from '@/types/study'
 export function ContentPanel({ chunks }: { chunks: ChunkDetail[] }) {
   if (chunks.length === 0) {
     return (
-      <div className="rounded-lg border bg-white p-6 text-center text-sm text-gray-500">
+      <div className="clay-card text-center text-sm text-clay-text/50">
         No content chunks for this performance indicator yet.
       </div>
     )
@@ -15,31 +15,31 @@ export function ContentPanel({ chunks }: { chunks: ChunkDetail[] }) {
   return (
     <div className="space-y-4">
       {chunks.map((chunk) => (
-        <div key={chunk.id} className="rounded-lg border bg-white p-4 shadow-sm">
+        <div key={chunk.id} className="clay-card-sm">
           <div className="mb-2 flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-gray-900">{chunk.title}</h4>
+            <h4 className="text-sm font-semibold text-clay-text">{chunk.title}</h4>
             <div className="flex items-center gap-2">
               {chunk.sourcePage && (
-                <span className="text-xs text-gray-400">p.{chunk.sourcePage}</span>
+                <span className="text-xs text-clay-text/40">p.{chunk.sourcePage}</span>
               )}
               {chunk.sourceType === 'article' && chunk.sourceUrl && (
                 <a
                   href={chunk.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-indigo-600 hover:underline"
+                  className="text-xs text-clay-primary hover:underline"
                 >
                   Source
                 </a>
               )}
               {chunk.isEdited && (
-                <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs text-yellow-700">
+                <span className="clay-badge bg-clay-warning/10 text-clay-warning">
                   edited
                 </span>
               )}
               <Link
                 href={`/content/editor/${chunk.id}`}
-                className="rounded border px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-50"
+                className="clay-btn-secondary rounded-clay-xs px-3 py-1 text-xs"
               >
                 Edit
               </Link>

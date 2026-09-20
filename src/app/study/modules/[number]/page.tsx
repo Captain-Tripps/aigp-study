@@ -31,22 +31,22 @@ export default function ModuleDetailPage() {
 
   if (error) {
     return (
-      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
-        <p className="text-red-600">{error}</p>
-        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+      <div className="clay-card text-center">
+        <p className="text-clay-danger">{error}</p>
+        <button onClick={load} className="clay-btn mt-3">
           Retry
         </button>
       </div>
     )
   }
-  if (!module) return <p className="text-gray-500">Loading...</p>
+  if (!module) return <p className="text-clay-text/50">Loading...</p>
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-semibold text-indigo-600">Module {module.number}</p>
-        <h1 className="text-2xl font-bold">{module.title}</h1>
-        <p className="mt-1 text-gray-600">{module.description}</p>
+        <p className="text-sm font-semibold text-clay-primary">Module {module.number}</p>
+        <h1 className="text-2xl font-bold text-clay-text">{module.title}</h1>
+        <p className="mt-1 text-clay-text/70">{module.description}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -60,13 +60,13 @@ export default function ModuleDetailPage() {
         <div className="lg:col-span-2">
           {selectedPI ? (
             selectedPI.chunks.length === 0 ? (
-              <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+              <div className="clay-card text-center text-clay-text/50">
                 No content yet. Add study content for this performance indicator.
               </div>
             ) : (
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold">
-                  <span className="font-mono text-indigo-600">{selectedPI.code}</span> — {selectedPI.description}
+                <h2 className="text-lg font-semibold text-clay-text">
+                  <span className="font-mono font-medium text-clay-primary">{selectedPI.code}</span> — {selectedPI.description}
                 </h2>
                 <ContentPanel chunks={selectedPI.chunks} />
                 <ProgressActions
@@ -77,7 +77,7 @@ export default function ModuleDetailPage() {
               </div>
             )
           ) : (
-            <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+            <div className="clay-card text-center text-clay-text/50">
               Select a performance indicator to view content
             </div>
           )}
