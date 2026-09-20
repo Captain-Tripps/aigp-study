@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { CompetencyTree } from '@/components/study/CompetencyTree'
 import { ContentPanel } from '@/components/study/ContentPanel'
+import { ProgressActions } from '@/components/study/ProgressActions'
 import type { ModuleDetail, PIDetail } from '@/types/study'
 
 export default function ModuleDetailPage() {
@@ -42,6 +43,11 @@ export default function ModuleDetailPage() {
                 <span className="font-mono text-indigo-600">{selectedPI.code}</span> — {selectedPI.description}
               </h2>
               <ContentPanel chunks={selectedPI.chunks} />
+              <ProgressActions
+                piId={selectedPI.id}
+                progress={selectedPI.progress}
+                onUpdated={(p) => setSelectedPI((prev) => prev ? { ...prev, progress: p } : null)}
+              />
             </div>
           ) : (
             <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
