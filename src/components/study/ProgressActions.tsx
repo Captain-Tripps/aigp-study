@@ -19,14 +19,22 @@ export function ProgressActions({
   const [status, setStatus] = useState(progress?.status || 'not_started')
   const [confidence, setConfidence] = useState(progress?.confidence || 0)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const save = async () => {
     setSaving(true)
-    await fetch('/api/progress', {
+    const res = await fetch('/api/progress', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ piId, status, confidence }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Failed to save (HTTP ${res.status})`)
+      setSaving(false)
+      return
+    }
+    setError(null)
     setSaving(false)
     onUpdated({ status, confidence })
   }
@@ -64,6 +72,7 @@ export function ProgressActions({
       >
         {saving ? 'Saving...' : 'Save'}
       </button>
+      {error && <p className="text-red-600 text-sm">{error}</p>}
     </div>
   )
 }
