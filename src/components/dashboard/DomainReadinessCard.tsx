@@ -27,14 +27,17 @@ export function DomainReadinessCard({ domain }: { domain: DomainReadiness }) {
             {domain.completedPis}/{domain.totalPis} PIs
           </span>
         </div>
-        <div className="clay-progress-track mt-2">
+        <div className="clay-progress-track mt-2"
+             role="progressbar" aria-valuenow={domain.readiness}
+             aria-valuemin={0} aria-valuemax={100}
+             aria-label={`Domain ${domain.romanNumeral} readiness`}>
           <div
             className={`clay-progress-fill ${fillColor}`}
             style={{ width: `${domain.readiness}%` }}
           />
         </div>
       </div>
-      <p className="mt-3 text-xs text-clay-text/40">
+      <p className="mt-3 text-xs text-clay-text/50">
         Avg confidence: {domain.avgConfidence}/5
       </p>
     </div>

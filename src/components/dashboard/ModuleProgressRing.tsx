@@ -7,14 +7,15 @@ export function ModuleProgressRing({ module }: { module: ModuleProgress }) {
 
   return (
     <div className="flex flex-col items-center">
-      <svg width="90" height="90" viewBox="0 0 90 90">
+      <svg width="90" height="90" viewBox="0 0 90 90" role="img"
+           aria-label={`Module M${module.number} ${module.completion}% complete`}>
         {/* Track: subtle sunken ring */}
         <circle cx="45" cy="45" r={radius} fill="none"
-                stroke="#E0E7FF" strokeWidth="8" />
+                className="stroke-clay-track" strokeWidth="8" />
         {/* Progress: clay primary */}
         <circle
           cx="45" cy="45" r={radius} fill="none"
-          stroke="#3B82F6" strokeWidth="8"
+          className="stroke-clay-primary" strokeWidth="8"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"

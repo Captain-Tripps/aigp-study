@@ -23,6 +23,7 @@ const config: Config = {
           danger: "#DC2626",
           dangerLight: "#FEE2E2",
           bg: "#F0F4FF",
+          track: "#E0E7FF",
         },
       },
       fontFamily: {

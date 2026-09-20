@@ -50,7 +50,7 @@ export default function PlannerPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Study Planner</h1>
+        <h1 className="text-2xl font-bold text-clay-text">Study Planner</h1>
         <p className="text-clay-text/50">Generate an 8-12 week study schedule</p>
       </div>
 

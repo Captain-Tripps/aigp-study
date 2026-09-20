@@ -50,7 +50,7 @@ export function CompetencyTree({
                       className={`w-full rounded px-2 py-1 text-left text-xs transition-colors ${
                         selectedPI === pi.id
                           ? 'bg-clay-primary/10 text-clay-primary'
-                          : 'text-clay-text/70 hover:bg-gray-50'
+                          : 'text-clay-text/70 hover:bg-clay-primary/5'
                       }`}
                     >
                       <span className="font-mono">{pi.code}</span> — {pi.description}

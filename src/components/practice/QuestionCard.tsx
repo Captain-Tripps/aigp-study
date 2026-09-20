@@ -72,7 +72,7 @@ export function QuestionCard({
             disabled={revealed}
             className={`w-full rounded-clay-sm border-0 bg-white p-3 text-left text-sm transition-colors ${optionClass(i)}`}
           >
-            <span className="mr-2 font-mono text-xs text-clay-text/30">{String.fromCharCode(65 + i)}</span>
+            <span className="mr-2 font-mono text-xs text-clay-text/50">{String.fromCharCode(65 + i)}</span>
             {opt}
           </button>
         ))}

@@ -20,7 +20,7 @@ export function ContentPanel({ chunks }: { chunks: ChunkDetail[] }) {
             <h4 className="text-sm font-semibold text-clay-text">{chunk.title}</h4>
             <div className="flex items-center gap-2">
               {chunk.sourcePage && (
-                <span className="text-xs text-clay-text/40">p.{chunk.sourcePage}</span>
+                <span className="text-xs text-clay-text/50">p.{chunk.sourcePage}</span>
               )}
               {chunk.sourceType === 'article' && chunk.sourceUrl && (
                 <a

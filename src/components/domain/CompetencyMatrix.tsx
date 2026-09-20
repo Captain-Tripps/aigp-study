@@ -20,7 +20,7 @@ export function CompetencyMatrix({ competencies }: { competencies: CompetencyRow
             const done = comp.pis.filter((pi) => pi.status === 'done').length
             const statusColor =
               done === comp.pis.length ? 'text-clay-success' :
-              done > 0 ? 'text-clay-warning' : 'text-clay-text/30'
+              done > 0 ? 'text-clay-warning' : 'text-clay-text/50'
             return (
               <tr key={comp.code} className="border-b last:border-0">
                 <td className="px-3 py-2 font-mono font-medium text-clay-primary">{comp.code}</td>

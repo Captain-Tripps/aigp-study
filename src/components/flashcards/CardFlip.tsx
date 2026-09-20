@@ -36,7 +36,7 @@ export function CardFlip({
   return (
     <div className="space-y-4">
       <div className="clay-card">
-        <p className="text-xs text-clay-text/30">
+        <p className="text-xs text-clay-text/50">
           {card.performanceIndicator.code} — {card.performanceIndicator.description}
         </p>
         <div className="mt-3 min-h-[100px]">
