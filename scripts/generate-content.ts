@@ -84,7 +84,7 @@ async function callLLM(prompt: string): Promise<LLMResponse> {
     throw new Error('LLM response had no content')
   }
 
-  const cleaned = stripCodeFences(content)
+  const cleaned = escapeControlCharsInJsonStrings(stripCodeFences(content))
   return JSON.parse(cleaned) as LLMResponse
 }
 
@@ -98,6 +98,47 @@ function stripCodeFences(text: string): string {
     t = t.slice(first, last + 1)
   }
   return t.trim()
+}
+
+// Some LLMs emit literal newlines inside JSON string values, which breaks
+// JSON.parse. This escape pass fixes only the control characters that
+// appear *between* quotes (i.e. inside strings) — structural newlines
+// between tokens are left alone.
+function escapeControlCharsInJsonStrings(json: string): string {
+  let out = ''
+  let inString = false
+  let escaped = false
+  for (let i = 0; i < json.length; i++) {
+    const ch = json[i]
+    if (inString) {
+      if (escaped) {
+        out += ch
+        escaped = false
+        continue
+      }
+      if (ch === '\\') {
+        out += ch
+        escaped = true
+        continue
+      }
+      if (ch === '"') {
+        out += ch
+        inString = false
+        continue
+      }
+      // Replace raw control chars that are illegal inside a JSON string
+      if (ch === '\n') { out += '\\n'; continue }
+      if (ch === '\r') { out += '\\r'; continue }
+      if (ch === '\t') { out += '\\t'; continue }
+      out += ch
+    } else {
+      if (ch === '"') {
+        inString = true
+      }
+      out += ch
+    }
+  }
+  return out
 }
 
 async function main() {

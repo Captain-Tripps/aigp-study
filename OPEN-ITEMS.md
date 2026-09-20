@@ -107,13 +107,15 @@ The manual visual checklist from Task 11 (screenshots, WCAG contrast spot-check 
 
 ---
 
-## 5. Content Generation Pipeline
+## 5. Content Generation Pipeline — [x]
 
-The content generation pipeline (`scripts/generate-content.ts`, `lib/content-templates.ts`, `prisma/study-content-seed.ts`) was built but not yet run (GPUs were busy at the time).
+The content generation pipeline was run on 2026-09-20 against `gpt-oss-120b` on the Zeus GPU server (localhost:8080).
 
-- [ ] Run content generation for all modules
-- [ ] Verify generated content quality
-- [ ] Seed the database with generated content
+- [x] Run content generation for all modules — 26/26 competencies generated, 26 manual content chunks in DB
+- [ ] Verify generated content quality — human review pending
+- [x] Seed the database with generated content — content chunks linked to first PI per competency, `sourceType: 'manual'`
+
+**Bug fixed during run:** `scripts/generate-content.ts` added `escapeControlCharsInJsonStrings()` to handle LLMs emitting raw newlines inside JSON string values (hit on 3 of 26 first pass).
 
 ---
 
