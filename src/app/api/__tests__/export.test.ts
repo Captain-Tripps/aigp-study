@@ -6,3 +6,11 @@ describe('Export API', () => {
     expect(mod.GET).toBeDefined()
   })
 })
+
+describe('Import API', () => {
+  it('should be importable and define POST', async () => {
+    const mod = await import('../import/route')
+    expect(mod.POST).toBeDefined()
+    expect(typeof mod.POST).toBe('function')
+  })
+})
