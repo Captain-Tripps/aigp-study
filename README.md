@@ -14,27 +14,36 @@ AI Governance Professional (AIGP) exam study companion. Built with Next.js 14, P
 - **Progress Tracking** — Mark PIs as done/in-progress with confidence ratings
 - **Export/Import** — JSON data portability
 
+
+
 ## Setup
 
+
+
 ### Prerequisites
+
 - Node.js 20+
 - npm 10+
+
+
 
 ### Installation
 
 1. Clone the repository
 2. Install dependencies:
-   ```bash
+  ```bash
    npm install
-   ```
+  ```
 3. Create the database:
-   ```bash
+  ```bash
    npx prisma migrate dev
-   ```
+  ```
 4. Seed exam domains and training modules:
-   ```bash
+  ```bash
    npx prisma db seed
-   ```
+  ```
+
+
 
 ### PDF Ingestion (optional)
 
@@ -42,9 +51,9 @@ To ingest the AIGP study supplement PDF:
 
 1. Place the PDF at the path specified in `scripts/parse-pdf.ts` (or pass the path as an argument)
 2. Run:
-   ```bash
+  ```bash
    npx tsx scripts/parse-pdf.ts [path/to/pdf]
-   ```
+  ```
 
 This parses the PDF structure (domains, competencies, performance indicators) and stores content chunks in the database.
 
@@ -53,19 +62,47 @@ This parses the PDF structure (domains, competencies, performance indicators) an
 - Questions: `npx tsx prisma/questions-seed.ts`
 - Flashcards: `npx tsx prisma/flashcards-seed.ts`
 
+### Generating Study Content
+
+The app includes a script to generate rich study content (plain-language summaries, glossaries, core concepts, exam misconceptions, and practice questions) for all 25 AIGP competencies.
+
+**Prerequisites:**
+- Llama-server running at `http://localhost:8080` (or set `LLM_URL` env var)
+- The PDF ingestion script must have been run first (to populate PIs)
+
+```bash
+npm run generate-content
+```
+
+Uses `gpt-oss-120b` by default. Override with `LLM_MODEL` env var if needed. The script is idempotent — re-run it to fill in any competencies that were skipped or failed.
+
+**Export/Import content** (for portable content across environments):
+
+```bash
+# Export current content to JSON
+npm run export:content
+
+# Import content from JSON (for fresh DBs)
+npm run seed:content
+```
+
+
+
 ### Development
 
 ```bash
-npm run dev
+npm run dev -- --port 3100
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3100](http://localhost:3000)
 
 ### Testing
 
 ```bash
 npx vitest run
 ```
+
+
 
 ### Production Build
 
@@ -74,9 +111,14 @@ npm run build
 npm run start
 ```
 
+
+
 ## Architecture
 
+
+
 ### Tech Stack
+
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript (strict mode)
 - **Database:** SQLite via Prisma ORM
@@ -85,45 +127,58 @@ npm run start
 - **Markdown:** react-markdown + remark-gfm
 - **Testing:** Vitest + Testing Library
 
+
+
 ### Data Model
 
 The Prisma schema defines 11 models:
 
-| Model | Description |
-|-------|-------------|
-| ExamDomain | 4 AIGP exam domains (I-IV) with weight ranges |
-| TrainingModule | 7 training modules mapped to exam domains |
-| ExamDomainToModule | Junction table linking exam domains to training modules |
-| Competency | Learning competencies within modules |
-| PerformanceIndicator | Specific PIs under each competency |
-| ContentChunk | Markdown content (PDF, YouTube, article, manual) |
-| UserProgress | Per-PI status (done/in-progress/not-started) + confidence |
-| Question | Practice questions with options and difficulty |
-| QuestionAttempt | Recorded quiz attempts |
-| Flashcard | SM-2 spaced repetition cards |
-| StudyPlan | Generated 10-week exam schedule |
+
+| Model                | Description                                               |
+| -------------------- | --------------------------------------------------------- |
+| ExamDomain           | 4 AIGP exam domains (I-IV) with weight ranges             |
+| TrainingModule       | 7 training modules mapped to exam domains                 |
+| ExamDomainToModule   | Junction table linking exam domains to training modules   |
+| Competency           | Learning competencies within modules                      |
+| PerformanceIndicator | Specific PIs under each competency                        |
+| ContentChunk         | Markdown content (PDF, YouTube, article, manual)          |
+| UserProgress         | Per-PI status (done/in-progress/not-started) + confidence |
+| Question             | Practice questions with options and difficulty            |
+| QuestionAttempt      | Recorded quiz attempts                                    |
+| Flashcard            | SM-2 spaced repetition cards                              |
+| StudyPlan            | Generated 10-week exam schedule                           |
+
+
+
 
 ### Routes
 
-| Route | Description |
-|-------|-------------|
-| `/` | Dashboard with readiness metrics |
-| `/study` | Module list with progress |
-| `/study/modules/[number]` | Module detail: competency tree + content |
-| `/study/domains/[roman]` | Domain view: competency matrix |
-| `/practice` | Practice questions with filters |
-| `/flashcards` | SM-2 flashcard review |
-| `/planner` | Study plan generator + calendar |
-| `/settings` | Exam config + data export/import |
-| `/content/editor/[chunkId]` | TipTap rich editor |
+
+| Route                       | Description                              |
+| --------------------------- | ---------------------------------------- |
+| `/`                         | Dashboard with readiness metrics         |
+| `/study`                    | Module list with progress                |
+| `/study/modules/[number]`   | Module detail: competency tree + content |
+| `/study/domains/[roman]`    | Domain view: competency matrix           |
+| `/practice`                 | Practice questions with filters          |
+| `/flashcards`               | SM-2 flashcard review                    |
+| `/planner`                  | Study plan generator + calendar          |
+| `/settings`                 | Exam config + data export/import         |
+| `/content/editor/[chunkId]` | TipTap rich editor                       |
+
+
+
 
 ### SRS Algorithm (SM-2)
 
 Flashcards use the SM-2 spaced repetition algorithm:
+
 - Quality ratings: 0-5 (Again=1, Hard=3, Good=4, Easy=5)
 - Ease factor adjusts per rating
 - Interval grows exponentially for correct answers, resets for incorrect
 - Due date calculation drives the review queue
+
+
 
 ## License
 
