@@ -33,25 +33,25 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
-        <p className="text-red-600">{error}</p>
-        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+      <div className="clay-card mx-auto max-w-md text-center">
+        <p className="text-clay-danger font-medium">{error}</p>
+        <button onClick={load} className="clay-btn mt-4">
           Retry
         </button>
       </div>
     )
   }
-  if (!data) return <p className="text-gray-500">Loading...</p>
+  if (!data) return <p className="text-clay-text/50">Loading...</p>
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-gray-500">Your AIGP exam readiness at a glance</p>
+        <h1 className="font-display text-3xl font-bold text-clay-text">Dashboard</h1>
+        <p className="mt-1 text-clay-text/60">Your AIGP exam readiness at a glance</p>
       </div>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold">Exam Domain Readiness</h2>
+        <h2 className="mb-4 font-display text-lg font-semibold text-clay-text">Exam Domain Readiness</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {data.domains.map((d) => (
             <DomainReadinessCard key={d.id} domain={d} />
@@ -60,8 +60,8 @@ export default function Dashboard() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold">Module Progress</h2>
-        <div className="flex flex-wrap gap-4">
+        <h2 className="mb-4 font-display text-lg font-semibold text-clay-text">Module Progress</h2>
+        <div className="flex flex-wrap gap-6">
           {data.modules.map((m) => (
             <ModuleProgressRing key={m.id} module={m} />
           ))}
@@ -69,9 +69,9 @@ export default function Dashboard() {
       </section>
 
       {data.nextActions.length > 0 && (
-        <section className="rounded-lg border bg-white p-4 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold">Next Actions</h2>
-          <ul className="list-inside list-disc text-sm text-gray-700">
+        <section className="clay-card">
+          <h2 className="mb-3 font-display text-lg font-semibold text-clay-text">Next Actions</h2>
+          <ul className="list-inside list-disc text-sm text-clay-text/80 space-y-1">
             {data.nextActions.map((action, i) => (
               <li key={i}>{action}</li>
             ))}
