@@ -51,34 +51,34 @@ export default function PlannerPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Study Planner</h1>
-        <p className="text-gray-500">Generate an 8-12 week study schedule</p>
+        <p className="text-clay-text/50">Generate an 8-12 week study schedule</p>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4 rounded-lg border bg-white p-4">
+      <div className="clay-card-sm flex flex-wrap items-end gap-4">
         <div>
-          <label className="text-sm font-medium text-gray-700">Exam Date</label>
+          <label className="text-sm font-medium text-clay-text/80">Exam Date</label>
           <input
             type="date"
             value={examDate}
             onChange={(e) => setExamDate(e.target.value)}
-            className="mt-1 block rounded border px-3 py-2 text-sm"
+            className="clay-input mt-1 block"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-700">Hours/Week</label>
+          <label className="text-sm font-medium text-clay-text/80">Hours/Week</label>
           <input
             type="number"
             min="4"
             max="20"
             value={weeklyHours}
             onChange={(e) => setWeeklyHours(parseInt(e.target.value, 10))}
-            className="mt-1 block w-20 rounded border px-3 py-2 text-sm"
+            className="clay-input mt-1 block w-20"
           />
         </div>
         <button
           onClick={generate}
           disabled={loading || !examDate}
-          className="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="clay-btn disabled:opacity-50"
         >
           {loading ? 'Generating...' : 'Generate Plan'}
         </button>
@@ -87,9 +87,9 @@ export default function PlannerPage() {
       {plan ? (
         <CalendarView weeks={plan.weeks} />
       ) : initialLoading ? (
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-clay-text/50">Loading...</p>
       ) : (
-        <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+        <div className="clay-card text-clay-text/50">
           Generate a plan to get started.
         </div>
       )}

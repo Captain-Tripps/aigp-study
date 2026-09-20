@@ -38,22 +38,22 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-gray-500">Manage your study configuration and data</p>
+        <p className="text-clay-text/50">Manage your study configuration and data</p>
       </div>
 
       <ExamSettings />
 
-      <div className="rounded-lg border bg-white p-4">
-        <h2 className="text-lg font-semibold">Data Management</h2>
+      <div className="clay-card-sm">
+        <h2 className="text-lg font-semibold text-clay-text">Data Management</h2>
         <div className="mt-4 flex flex-wrap gap-4">
           <button
             onClick={handleExport}
             disabled={exporting}
-            className="rounded border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="clay-btn-secondary disabled:opacity-50"
           >
             {exporting ? 'Exporting...' : 'Export Data (JSON)'}
           </button>
-          <label className="cursor-pointer rounded border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <label className="clay-btn-secondary cursor-pointer">
             {importing ? 'Importing...' : 'Import Data (JSON)'}
             <input
               type="file"

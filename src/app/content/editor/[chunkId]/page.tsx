@@ -74,25 +74,25 @@ export default function ContentEditorPage() {
 
   if (error) {
     return (
-      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
-        <p className="text-red-600">{error}</p>
-        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+      <div className="clay-card text-center">
+        <p className="text-clay-danger">{error}</p>
+        <button onClick={load} className="clay-btn mt-3">
           Retry
         </button>
       </div>
     )
   }
-  if (!chunk) return <p className="text-gray-500">Loading...</p>
+  if (!chunk) return <p className="text-clay-text/50">Loading...</p>
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-semibold text-indigo-600">
+        <p className="text-sm font-semibold text-clay-primary">
           {chunk.performanceIndicator.code} — {chunk.performanceIndicator.description}
         </p>
-        <h1 className="text-2xl font-bold">{chunk.title}</h1>
+        <h1 className="text-2xl font-bold text-clay-text">{chunk.title}</h1>
         {chunk.sourcePage && (
-          <p className="text-sm text-gray-500">Source: PDF page {chunk.sourcePage}</p>
+          <p className="text-sm text-clay-text/50">Source: PDF page {chunk.sourcePage}</p>
         )}
       </div>
 
@@ -105,7 +105,7 @@ export default function ContentEditorPage() {
           <button
             onClick={save}
             disabled={saving}
-            className="w-full rounded bg-indigo-600 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="clay-btn w-full disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
