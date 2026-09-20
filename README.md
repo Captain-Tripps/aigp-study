@@ -87,12 +87,13 @@ npm run start
 
 ### Data Model
 
-The Prisma schema defines 10 models:
+The Prisma schema defines 11 models:
 
 | Model | Description |
 |-------|-------------|
 | ExamDomain | 4 AIGP exam domains (I-IV) with weight ranges |
 | TrainingModule | 7 training modules mapped to exam domains |
+| ExamDomainToModule | Junction table linking exam domains to training modules |
 | Competency | Learning competencies within modules |
 | PerformanceIndicator | Specific PIs under each competency |
 | ContentChunk | Markdown content (PDF, YouTube, article, manual) |
