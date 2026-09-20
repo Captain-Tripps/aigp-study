@@ -34,35 +34,35 @@ export function QuestionCard({
   const optionClass = (index: number) => {
     if (!revealed) {
       return selected === index
-        ? 'border-indigo-500 bg-indigo-50'
-        : 'border-gray-200 hover:border-gray-300'
+        ? 'bg-clay-primary/10 text-clay-primary shadow-[inset_0_2px_4px_rgba(59,130,246,0.15)]'
+        : 'hover:bg-clay-primary/5'
     }
-    if (index === question.correctAnswer) return 'border-green-500 bg-green-50'
-    if (index === selected) return 'border-red-500 bg-red-50'
-    return 'border-gray-200'
+    if (index === question.correctAnswer) return 'bg-clay-success/10 text-clay-success'
+    if (index === selected) return 'bg-clay-danger/10 text-clay-danger'
+    return 'opacity-60'
   }
 
   return (
-    <div className="rounded-lg border bg-white p-4 shadow-sm">
+    <div className="clay-card">
       <div className="mb-2 flex items-center gap-2 text-xs">
-        <span className="rounded bg-gray-100 px-1.5 py-0.5 text-gray-600">
+        <span className="rounded bg-clay-text/5 px-1.5 py-0.5 text-clay-text/70">
           Domain {question.examDomain.romanNumeral}
         </span>
         {question.trainingModule && (
-          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-gray-600">
+          <span className="rounded bg-clay-text/5 px-1.5 py-0.5 text-clay-text/70">
             M{question.trainingModule.number}
           </span>
         )}
         <span className={`rounded px-1.5 py-0.5 ${
-          question.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-          question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-          'bg-red-100 text-red-700'
+          question.difficulty === 'easy' ? 'bg-clay-success/10 text-clay-success' :
+          question.difficulty === 'medium' ? 'bg-clay-warning/10 text-clay-warning' :
+          'bg-clay-danger/10 text-clay-danger'
         }`}>
           {question.difficulty}
         </span>
       </div>
 
-      <p className="mb-4 text-sm font-medium text-gray-900">{question.text}</p>
+      <p className="mb-4 text-sm font-medium text-clay-text">{question.text}</p>
 
       <div className="space-y-2">
         {question.options.map((opt, i) => (
@@ -70,20 +70,20 @@ export function QuestionCard({
             key={i}
             onClick={() => handleSelect(i)}
             disabled={revealed}
-            className={`w-full rounded border p-3 text-left text-sm transition-colors ${optionClass(i)}`}
+            className={`w-full rounded-clay-sm border-0 bg-white p-3 text-left text-sm transition-colors ${optionClass(i)}`}
           >
-            <span className="mr-2 font-mono text-xs text-gray-400">{String.fromCharCode(65 + i)}</span>
+            <span className="mr-2 font-mono text-xs text-clay-text/30">{String.fromCharCode(65 + i)}</span>
             {opt}
           </button>
         ))}
       </div>
 
       {revealed && (
-        <div className="mt-4 rounded-lg bg-gray-50 p-3 text-sm">
-          <p className="font-medium text-gray-900">
+        <div className="mt-4 rounded-clay-sm bg-clay-primary/5 p-4 text-sm">
+          <p className="font-medium text-clay-text">
             {selected === question.correctAnswer ? 'Correct' : 'Incorrect'}
           </p>
-          <p className="mt-1 text-gray-600">{question.explanation}</p>
+          <p className="mt-1 text-clay-text/70">{question.explanation}</p>
         </div>
       )}
     </div>

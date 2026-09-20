@@ -27,20 +27,20 @@ export function CardFlip({
   const flip = () => setRevealed(!revealed)
 
   const ratings = [
-    { label: 'Again', quality: 0, color: 'bg-red-500' },
-    { label: 'Hard', quality: 3, color: 'bg-yellow-500' },
-    { label: 'Good', quality: 4, color: 'bg-green-500' },
-    { label: 'Easy', quality: 5, color: 'bg-blue-500' },
+    { label: 'Again', quality: 0, color: '!bg-clay-danger' },
+    { label: 'Hard', quality: 3, color: '!bg-clay-warning' },
+    { label: 'Good', quality: 4, color: '!bg-clay-success' },
+    { label: 'Easy', quality: 5, color: '!bg-clay-primary' },
   ]
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <p className="text-xs text-gray-400">
+      <div className="clay-card">
+        <p className="text-xs text-clay-text/30">
           {card.performanceIndicator.code} — {card.performanceIndicator.description}
         </p>
         <div className="mt-3 min-h-[100px]">
-          <p className="text-lg font-medium text-gray-900">
+          <p className="text-lg font-medium text-clay-text">
             {revealed ? card.back : card.front}
           </p>
         </div>
@@ -49,7 +49,7 @@ export function CardFlip({
       {!revealed ? (
         <button
           onClick={flip}
-          className="w-full rounded-lg bg-indigo-600 py-3 text-sm font-medium text-white hover:bg-indigo-700"
+          className="clay-btn w-full !py-3"
         >
           Flip
         </button>
@@ -59,7 +59,7 @@ export function CardFlip({
             <button
               key={r.quality}
               onClick={() => onRate(r.quality)}
-              className={`rounded-lg py-3 text-sm font-medium text-white ${r.color}`}
+              className={`clay-btn ${r.color}`}
             >
               {r.label}
             </button>

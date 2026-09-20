@@ -57,8 +57,8 @@ export default function PracticePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Practice Questions</h1>
-        <p className="text-gray-500">
+        <h1 className="text-2xl font-bold text-clay-text">Practice Questions</h1>
+        <p className="text-clay-text/50">
           {answered.total > 0
             ? `${answered.correct}/${answered.total} correct (${Math.round((answered.correct / answered.total) * 100)}%)`
             : 'Test your knowledge across all exam domains'}
@@ -66,53 +66,53 @@ export default function PracticePage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <select value={domain} onChange={(e) => setDomain(e.target.value)} className="rounded border px-2 py-1 text-sm">
+        <select value={domain} onChange={(e) => setDomain(e.target.value)} className="clay-input">
           <option value="">All domains</option>
           <option value="I">Domain I</option>
           <option value="II">Domain II</option>
           <option value="III">Domain III</option>
           <option value="IV">Domain IV</option>
         </select>
-        <select value={module} onChange={(e) => setModule(e.target.value)} className="rounded border px-2 py-1 text-sm">
+        <select value={module} onChange={(e) => setModule(e.target.value)} className="clay-input">
           <option value="">All modules</option>
           {[1,2,3,4,5,6,7].map((n) => <option key={n} value={n}>Module {n}</option>)}
         </select>
-        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="rounded border px-2 py-1 text-sm">
+        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="clay-input">
           <option value="">All difficulty</option>
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
         </select>
-        <button onClick={loadQuestions} className="rounded bg-indigo-600 px-3 py-1 text-sm font-medium text-white hover:bg-indigo-700">
+        <button onClick={loadQuestions} className="clay-btn">
           Search
         </button>
       </div>
 
       {currentQ ? (
         <div className="space-y-4">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-clay-text/50">
             Question {currentIndex + 1} of {questions.length}
           </p>
           <QuestionCard question={currentQ} onAnswer={handleAnswer} />
           {answered.total > 0 && currentIndex < questions.length - 1 && (
             <button
               onClick={nextQuestion}
-              className="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+              className="clay-btn"
             >
               Next Question
             </button>
           )}
           {answered.total > 0 && currentIndex === questions.length - 1 && (
-            <div className="rounded-lg border bg-white p-4">
-              <h2 className="text-lg font-semibold">Session Complete</h2>
-              <p className="mt-1 text-sm text-gray-600">
+            <div className="clay-card">
+              <h2 className="text-lg font-semibold text-clay-text">Session Complete</h2>
+              <p className="mt-1 text-sm text-clay-text/70">
                 Score: {answered.correct}/{answered.total} ({Math.round((answered.correct / answered.total) * 100)}%)
               </p>
             </div>
           )}
         </div>
       ) : (
-        <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+        <div className="clay-card text-clay-text/50">
           {loading ? 'Loading...' : 'No questions found for the selected filters.'}
         </div>
       )}

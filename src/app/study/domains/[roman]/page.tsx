@@ -28,41 +28,41 @@ export default function DomainPage() {
 
   if (error) {
     return (
-      <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
-        <p className="text-red-600">{error}</p>
-        <button onClick={load} className="mt-3 rounded bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+      <div className="clay-card text-center">
+        <p className="text-clay-danger">{error}</p>
+        <button onClick={load} className="clay-btn mt-3">
           Retry
         </button>
       </div>
     )
   }
-  if (!domain) return <p className="text-gray-500">Loading...</p>
+  if (!domain) return <p className="text-clay-text/50">Loading...</p>
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border bg-white p-4 shadow-sm">
+      <div className="clay-card">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-indigo-600">
+            <p className="text-sm font-semibold text-clay-primary">
               Domain {domain.romanNumeral}
             </p>
-            <h1 className="text-2xl font-bold">{domain.title}</h1>
+            <h1 className="text-2xl font-bold text-clay-text">{domain.title}</h1>
           </div>
           <div className="text-right">
-            <span className="rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700">
+            <span className="clay-badge bg-clay-primary/10 text-clay-primary">
               {domain.weightMin}-{domain.weightMax}%
             </span>
-            <p className="mt-1 text-sm text-gray-600">{domain.readiness}% ready</p>
+            <p className="mt-1 text-sm text-clay-text/70">{domain.readiness}% ready</p>
           </div>
         </div>
-        <p className="mt-2 text-sm text-gray-600">{domain.description}</p>
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="mt-2 text-sm text-clay-text/70">{domain.description}</p>
+        <p className="mt-2 text-xs text-clay-text/50">
           Modules: {domain.modules.map((m) => `M${m.number}`).join(', ')}
         </p>
       </div>
 
       {domain.competencies.length === 0 ? (
-        <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+        <div className="clay-card text-clay-text/50">
           No competencies mapped to this domain yet.
         </div>
       ) : (

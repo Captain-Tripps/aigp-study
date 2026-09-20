@@ -56,8 +56,8 @@ export default function FlashcardsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Flashcards</h1>
-        <p className="text-gray-500">
+        <h1 className="text-2xl font-bold text-clay-text">Flashcards</h1>
+        <p className="text-clay-text/50">
           {cards.length > 0
             ? `${cards.length - currentIndex} cards remaining in queue`
             : 'No due flashcards. Review more content or add new cards.'}
@@ -68,7 +68,7 @@ export default function FlashcardsPage() {
       {currentCard ? (
         <CardFlip card={currentCard} onRate={handleRate} revealed={revealed} />
       ) : (
-        <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
+        <div className="clay-card text-clay-text/50">
           No flashcards due. Study more content to generate new cards.
         </div>
       )}
