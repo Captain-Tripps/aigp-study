@@ -14,19 +14,21 @@ Living tracker for all known open items. Items are grouped by category and order
 
 These were identified in the initial whole-branch review of the AIGP Study App (v1, commit `29cf9ac`). They are non-blocking for v1 but should be addressed for v1.1 or v2.
 
-### F-1: Editor enrichment
+### F-1: Editor enrichment — [x]
 
 The TipTap editor is functional but thin. Enrich with:
 
-- **Callouts** — blockquote-style callout blocks for key definitions
-- **KaTeX** — math rendering for formulas in study material
-- **PI cross-refs** — clickable links from content to specific Performance Indicators
-- **Mermaid** — diagram support for process flows and architecture diagrams
-- **Edit history / diff / revert** — track edits to study content chunks, show diffs, allow reverting to previous versions
+- **Callouts** — blockquote-style callout blocks for key definitions ✅
+- **KaTeX** — math rendering for formulas in study material ✅
+- **PI cross-refs** — clickable links from content to specific Performance Indicators ✅
+- **Mermaid** — diagram support for process flows and architecture diagrams ✅
+- **Edit history / diff / revert** — track edits to study content chunks, show diffs, allow reverting to previous versions ✅
 
-### F-2: Export/import faithful round-trip
+**Implementation (2026-09-20):** `@tiptap/extension-mathematics` + `katex` for math. Custom `CalloutBlock` (block node, 4 variants), `PIReference` (inline atom with `next/link` nav), `MermaidBlock` (block node with lazy-loaded mermaid rendering). `ContentChunkRevision` Prisma model + API routes for history/diff/revert. Toolbar in `RichEditor` for inserting all new types. Commits: `152878b`, `749ad9f`.
 
-The current export/import flow does not preserve all fields faithfully. A round-trip (export → import) should produce an identical database state. Investigate which fields are lost and fix the serialization/deserialization.
+### F-2: Export/import faithful round-trip — [x]
+
+The current export/import flow does not preserve all fields faithfully. A round-trip (export → import) should produce an identical database state. **Fixed (2026-09-20):** Import route rewritten to handle all 8 tables in dependency order with ID remapping (old→new maps for auto-incremented PKs). Upsert on natural keys for idempotency. Returns per-table counts. Commit: `24acb5c`.
 
 ### F-3: FK indexes + bounded queries
 
@@ -51,13 +53,13 @@ Current integration tests depend on local environment (SQLite file paths, etc.).
 
 ## 2. v1 Review — Important Findings
 
-### I-1: Editor is thin
+### I-1: Editor is thin — [x]
 
-See F-1 above. The editor needs enrichment to be useful for studying complex governance material.
+See F-1 above. Resolved with F-1 enrichment (commits `152878b`, `749ad9f`).
 
-### I-2: Export/import not faithful round-trip
+### I-2: Export/import not faithful round-trip — [x]
 
-See F-2 above.
+See F-2 above. Resolved with import route rewrite (commit `24acb5c`).
 
 ---
 
