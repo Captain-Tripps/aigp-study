@@ -14,7 +14,7 @@ export function CalendarView({ weeks }: { weeks: WeekPlan[] }) {
         <div key={w.week} className="rounded-lg border bg-white p-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900">
-              Week {w.week}: {w.startDate.toLocaleDateString()} — {w.endDate.toLocaleDateString()}
+              Week {w.week}: {new Date(w.startDate).toLocaleDateString()} — {new Date(w.endDate).toLocaleDateString()}
             </h3>
             <span className="text-xs text-gray-500">
               {w.dailyHours.toFixed(1)} hrs/day

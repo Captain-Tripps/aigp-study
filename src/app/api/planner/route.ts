@@ -6,12 +6,13 @@ export async function GET() {
   const plan = await prisma.studyPlan.findFirst({ orderBy: { createdAt: 'desc' } })
   if (!plan) return NextResponse.json(null)
 
+  const weeks = JSON.parse(plan.moduleSchedule)
   return NextResponse.json({
     examDate: plan.examDate,
     weeklyHours: plan.weeklyHours,
     startDate: plan.startDate,
-    moduleSchedule: JSON.parse(plan.moduleSchedule),
-    domainTargets: JSON.parse(plan.domainTargets),
+    totalWeeks: weeks.length,
+    weeks,
   })
 }
 
