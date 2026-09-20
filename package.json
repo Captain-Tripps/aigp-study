@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "generate-content": "tsx scripts/generate-content.ts",
+    "seed:content": "tsx prisma/study-content-seed.ts import",
+    "export:content": "tsx prisma/study-content-seed.ts export"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
