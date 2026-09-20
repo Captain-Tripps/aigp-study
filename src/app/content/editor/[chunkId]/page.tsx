@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { RichEditor } from '@/components/editor/RichEditor'
 import { MetadataPanel } from '@/components/editor/MetadataPanel'
+import { RevisionHistory } from '@/components/editor/RevisionHistory'
 
 interface ContentChunkDetail {
   id: number
@@ -70,6 +71,7 @@ export default function ContentEditorPage() {
       body: JSON.stringify({ editedContent, metadata }),
     })
     setSaving(false)
+    load()
   }
 
   if (error) {
@@ -109,6 +111,7 @@ export default function ContentEditorPage() {
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
+          <RevisionHistory chunkId={chunk.id} onReverted={load} />
         </div>
       </div>
     </div>

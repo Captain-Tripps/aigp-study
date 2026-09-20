@@ -36,13 +36,30 @@ export async function PUT(
     return NextResponse.json({ error: 'Chunk not found' }, { status: 404 })
   }
 
+  const previousContent = chunk.editedContent || chunk.content
+  const metadataStr =
+    typeof metadata === 'string'
+      ? metadata
+      : metadata
+        ? JSON.stringify(metadata)
+        : null
+
+  await prisma.contentChunkRevision.create({
+    data: {
+      contentChunkId: id,
+      editedContent,
+      metadata: metadataStr,
+      previousContent,
+    },
+  })
+
   await prisma.contentChunk.update({
     where: { id },
     data: {
       editedContent,
       isEdited: true,
       editedAt: new Date(),
-      ...(metadata && { metadata: JSON.stringify(metadata) }),
+      ...(metadataStr && { metadata: metadataStr }),
     },
   })
 

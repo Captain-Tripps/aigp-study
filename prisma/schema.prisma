@@ -76,6 +76,17 @@ model ContentChunk {
   editedContent          String?
   editedAt               DateTime?
   metadata               String?
+  revisions              ContentChunkRevision[]
+}
+
+model ContentChunkRevision {
+  id                  Int            @id @default(autoincrement())
+  contentChunkId      Int
+  contentChunk        ContentChunk   @relation(fields: [contentChunkId], references: [id], onDelete: Cascade)
+  editedContent       String
+  metadata            String?
+  previousContent     String
+  createdAt           DateTime       @default(now())
 }
 
 model UserProgress {
