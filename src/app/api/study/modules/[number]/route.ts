@@ -39,15 +39,17 @@ export async function GET(
         id: pi.id,
         code: pi.code,
         description: pi.description,
-        chunks: pi.contentChunks.map((ch) => ({
-          id: ch.id,
-          type: ch.type,
-          title: ch.title,
-          content: ch.editedContent || ch.content,
-          sourcePage: ch.sourcePage,
-          isEdited: ch.isEdited,
-          editedContent: ch.editedContent,
-        })),
+          chunks: pi.contentChunks.map((ch) => ({
+            id: ch.id,
+            type: ch.type,
+            title: ch.title,
+            content: ch.editedContent || ch.content,
+            sourcePage: ch.sourcePage,
+            sourceType: ch.sourceType,
+            sourceUrl: ch.sourceUrl,
+            isEdited: ch.isEdited,
+            editedContent: ch.editedContent,
+          })),
         progress: pi.userProgress
           ? { status: pi.userProgress.status, confidence: pi.userProgress.confidence }
           : null,

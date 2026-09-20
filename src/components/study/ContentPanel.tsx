@@ -22,6 +22,16 @@ export function ContentPanel({ chunks }: { chunks: ChunkDetail[] }) {
               {chunk.sourcePage && (
                 <span className="text-xs text-gray-400">p.{chunk.sourcePage}</span>
               )}
+              {chunk.sourceType === 'article' && chunk.sourceUrl && (
+                <a
+                  href={chunk.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-indigo-600 hover:underline"
+                >
+                  Source
+                </a>
+              )}
               {chunk.isEdited && (
                 <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs text-yellow-700">
                   edited

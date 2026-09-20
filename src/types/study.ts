@@ -13,6 +13,8 @@ export interface ChunkDetail {
   title: string
   content: string
   sourcePage: number | null
+  sourceType: string
+  sourceUrl: string | null
   isEdited: boolean
   editedContent: string | null
 }
