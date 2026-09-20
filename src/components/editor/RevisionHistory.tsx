@@ -23,8 +23,16 @@ export function RevisionHistory({
 
   const load = useCallback(() => {
     fetch(`/api/content/${chunkId}/revisions`)
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setRevisions)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.revisions)) {
+          setRevisions(data.revisions)
+        } else if (Array.isArray(data)) {
+          setRevisions(data)
+        } else {
+          setRevisions([])
+        }
+      })
       .catch(() => setRevisions([]))
   }, [chunkId])
 

@@ -25,17 +25,22 @@ export async function POST(req: Request) {
 
   const plan = generatePlan(new Date(examDate), weeklyHours)
 
-  await prisma.studyPlan.create({
-    data: {
-      examDate: plan.examDate,
-      weeklyHours: plan.weeklyHours,
-      startDate: plan.startDate,
-      moduleSchedule: JSON.stringify(plan.weeks),
-      domainTargets: JSON.stringify(
-        plan.weeks[plan.weeks.length - 1].domainMilestones
-      ),
-    },
-  })
+  const existing = await prisma.studyPlan.findFirst({ orderBy: { createdAt: 'desc' } })
+  const data = {
+    examDate: plan.examDate,
+    weeklyHours: plan.weeklyHours,
+    startDate: plan.startDate,
+    moduleSchedule: JSON.stringify(plan.weeks),
+    domainTargets: JSON.stringify(
+      plan.weeks[plan.weeks.length - 1].domainMilestones
+    ),
+  }
+
+  if (existing) {
+    await prisma.studyPlan.update({ where: { id: existing.id }, data })
+  } else {
+    await prisma.studyPlan.create({ data })
+  }
 
   return NextResponse.json({
     examDate: plan.examDate,

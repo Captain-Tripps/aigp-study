@@ -102,7 +102,16 @@ const questions = [
 ]
 
 async function main() {
+  let created = 0
+  let skipped = 0
+
   for (const q of questions) {
+    const existing = await prisma.question.findFirst({ where: { text: q.text } })
+    if (existing) {
+      skipped++
+      continue
+    }
+
     const domain = await prisma.examDomain.findUnique({ where: { romanNumeral: q.domain } })
     if (!domain) continue
 
@@ -124,10 +133,11 @@ async function main() {
         difficulty: q.difficulty,
       },
     })
+    created++
   }
 
   const count = await prisma.question.count()
-  console.log(`Seeded ${count} questions`)
+  console.log(`Seeded ${created} questions (skipped ${skipped} existing, ${count} total)`)
 }
 
 main().catch((e) => { console.error(e); process.exit(1) }).finally(async () => { await prisma.$disconnect() })

@@ -25,6 +25,8 @@ const MODULE_TITLES: Record<number, string> = {
   7: 'Governing AI Deployment',
 }
 
+const WEEK_MODULE_DISTRIBUTION = [1, 1, 1, 2, 2, 3, 4, 5, 6, 7]
+
 const DOMAIN_WEIGHTS: Record<string, number> = {
   I: 18,
   II: 20,
@@ -47,7 +49,7 @@ export function generatePlan(examDate: Date, weeklyHours: number): StudyPlanData
     const weekEnd = new Date(weekStart)
     weekEnd.setDate(weekEnd.getDate() + 6)
 
-    const moduleNumber = Math.min(7, Math.ceil(((w + 1) / totalWeeks) * 7))
+    const moduleNumber = WEEK_MODULE_DISTRIBUTION[w]
     const modules = [{
       number: moduleNumber,
       title: MODULE_TITLES[moduleNumber],

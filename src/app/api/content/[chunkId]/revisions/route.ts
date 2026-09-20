@@ -2,15 +2,25 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: { chunkId: string } }
 ) {
+  const { searchParams } = new URL(req.url)
+  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10) || 1)
+  const pageSize = Math.min(
+    100,
+    Math.max(1, parseInt(searchParams.get('pageSize') ?? '20', 10) || 20)
+  )
   const id = parseInt(params.chunkId, 10)
+  const where = { contentChunkId: id }
   const revisions = await prisma.contentChunkRevision.findMany({
-    where: { contentChunkId: id },
+    where,
     orderBy: { createdAt: 'desc' },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   })
-  return NextResponse.json(revisions)
+  const total = await prisma.contentChunkRevision.count({ where })
+  return NextResponse.json({ revisions, total, page, pageSize })
 }
 
 export async function POST(

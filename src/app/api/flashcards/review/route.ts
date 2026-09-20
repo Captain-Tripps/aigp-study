@@ -9,6 +9,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'flashcardId and quality required' }, { status: 400 })
   }
 
+  if (!Number.isInteger(quality) || quality < 0 || quality > 5) {
+    return NextResponse.json({ error: 'quality must be an integer between 0 and 5' }, { status: 400 })
+  }
+
   const card = await prisma.flashcard.findUnique({ where: { id: flashcardId } })
   if (!card) {
     return NextResponse.json({ error: 'Flashcard not found' }, { status: 404 })

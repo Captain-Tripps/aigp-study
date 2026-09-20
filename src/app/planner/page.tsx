@@ -26,24 +26,40 @@ export default function PlannerPage() {
   const [plan, setPlan] = useState<PlanData | null>(null)
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const generate = async () => {
     if (!examDate) return
     setLoading(true)
+    setError(null)
     const res = await fetch('/api/planner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ examDate, weeklyHours }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      setLoading(false)
+      return
+    }
     const data = await res.json()
     setPlan(data)
     setLoading(false)
   }
 
   useEffect(() => {
+    setError(null)
     fetch('/api/planner')
-      .then((r) => r.json())
-      .then((data) => { if (data) setPlan(data) })
+      .then(async (r) => {
+        if (!r.ok) {
+          const err = await r.json().catch(() => null)
+          setError(err?.error || `Request failed (HTTP ${r.status})`)
+          return
+        }
+        const data = await r.json()
+        if (data) setPlan(data)
+      })
       .finally(() => setInitialLoading(false))
   }, [])
 
@@ -84,7 +100,14 @@ export default function PlannerPage() {
         </button>
       </div>
 
-      {plan ? (
+      {error ? (
+        <div className="clay-card text-center">
+          <p className="text-clay-danger">{error}</p>
+          <button onClick={generate} className="clay-btn mt-3">
+            Retry
+          </button>
+        </div>
+      ) : plan ? (
         <CalendarView weeks={plan.weeks} />
       ) : initialLoading ? (
         <p className="text-clay-text/50">Loading...</p>

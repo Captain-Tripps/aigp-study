@@ -24,14 +24,22 @@ export default function PracticePage() {
   const [difficulty, setDifficulty] = useState('')
   const [answered, setAnswered] = useState<{ correct: number; total: number }>({ correct: 0, total: 0 })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const loadQuestions = useCallback(async () => {
     setLoading(true)
+    setError(null)
     const params = new URLSearchParams()
     if (domain) params.set('domain', domain)
     if (module) params.set('module', module)
     if (difficulty) params.set('difficulty', difficulty)
     const res = await fetch(`/api/questions?${params}`)
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      setLoading(false)
+      return
+    }
     const data = await res.json()
     setQuestions(data.questions)
     setCurrentIndex(0)
@@ -88,7 +96,14 @@ export default function PracticePage() {
         </button>
       </div>
 
-      {currentQ ? (
+      {error ? (
+        <div className="clay-card text-center">
+          <p className="text-clay-danger">{error}</p>
+          <button onClick={loadQuestions} className="clay-btn mt-3">
+            Retry
+          </button>
+        </div>
+      ) : currentQ ? (
         <div className="space-y-4">
           <p className="text-sm text-clay-text/50">
             Question {currentIndex + 1} of {questions.length}

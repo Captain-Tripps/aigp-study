@@ -6,6 +6,11 @@ export async function GET(req: Request) {
   const domain = searchParams.get('domain')
   const moduleParam = searchParams.get('module')
   const difficulty = searchParams.get('difficulty')
+  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10) || 1)
+  const pageSize = Math.min(
+    200,
+    Math.max(1, parseInt(searchParams.get('pageSize') ?? '50', 10) || 50)
+  )
 
   const where: Record<string, unknown> = {}
   if (domain) {
@@ -26,6 +31,8 @@ export async function GET(req: Request) {
       performanceIndicator: { select: { code: true, description: true } },
     },
     orderBy: { id: 'asc' },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   })
 
   const total = await prisma.question.count({ where })
@@ -33,5 +40,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     questions: questions.map((q) => ({ ...q, options: JSON.parse(q.options) })),
     total,
+    page,
+    pageSize,
   })
 }

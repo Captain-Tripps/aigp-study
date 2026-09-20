@@ -6,10 +6,18 @@ import { ExamSettings } from '@/components/settings/ExamSettings'
 export default function SettingsPage() {
   const [exporting, setExporting] = useState(false)
   const [importing, setImporting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleExport = async () => {
     setExporting(true)
+    setError(null)
     const res = await fetch('/api/export')
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      setExporting(false)
+      return
+    }
     const blob = await res.blob()
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -24,13 +32,18 @@ export default function SettingsPage() {
     const file = e.target.files?.[0]
     if (!file) return
     setImporting(true)
+    setError(null)
     const text = await file.text()
     const data = JSON.parse(text)
-    await fetch('/api/import', {
+    const res = await fetch('/api/import', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+    }
     setImporting(false)
   }
 
@@ -63,6 +76,7 @@ export default function SettingsPage() {
             />
           </label>
         </div>
+        {error && <p className="mt-3 text-clay-danger text-sm">{error}</p>}
       </div>
     </div>
   )

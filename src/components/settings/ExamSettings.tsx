@@ -6,6 +6,7 @@ export function ExamSettings() {
   const [examDate, setExamDate] = useState('')
   const [weeklyHours, setWeeklyHours] = useState(10)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/planner')
@@ -19,11 +20,17 @@ export function ExamSettings() {
   }, [])
 
   const save = async () => {
-    await fetch('/api/planner', {
+    setError(null)
+    const res = await fetch('/api/planner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ examDate, weeklyHours }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      return
+    }
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -57,6 +64,7 @@ export function ExamSettings() {
       >
         {saved ? 'Saved!' : 'Save Settings'}
       </button>
+      {error && <p className="text-clay-danger text-sm">{error}</p>}
     </div>
   )
 }

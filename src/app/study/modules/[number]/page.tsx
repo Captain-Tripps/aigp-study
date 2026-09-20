@@ -7,11 +7,89 @@ import { ContentPanel } from '@/components/study/ContentPanel'
 import { ProgressActions } from '@/components/study/ProgressActions'
 import type { ModuleDetail, PIDetail } from '@/types/study'
 
+function AddContentForm({ piId, onAdded, onBack }: { piId: number; onAdded: () => void; onBack: () => void }) {
+  const [type, setType] = useState('article')
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+    setSubmitError(null)
+    try {
+      const r = await fetch('/api/content/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ performanceIndicatorId: piId, type, title, content }),
+      })
+      if (!r.ok) {
+        const err = await r.json().catch(() => null)
+        setSubmitError(err?.error || `Failed to add content (HTTP ${r.status})`)
+        return
+      }
+      onAdded()
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to add content')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="clay-card-sm space-y-4">
+      <h3 className="text-sm font-semibold text-clay-text">Add content</h3>
+      <form onSubmit={submit} className="space-y-3">
+        <div>
+          <label className="block text-xs font-medium text-clay-text/70">Type</label>
+          <select value={type} onChange={(e) => setType(e.target.value)} className="clay-input mt-1 block">
+            <option value="article">article</option>
+            <option value="note">note</option>
+            <option value="resource">resource</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-clay-text/70">Title</label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="clay-input mt-1 block w-full"
+            placeholder="Content title"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-clay-text/70">Content</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="clay-input mt-1 block w-full"
+            rows={6}
+            placeholder="Content"
+            required
+          />
+        </div>
+        {submitError && <p className="text-clay-danger text-sm">{submitError}</p>}
+        <div className="flex gap-2">
+          <button type="submit" className="clay-btn disabled:opacity-50" disabled={saving}>
+            {saving ? 'Saving...' : 'Add Content'}
+          </button>
+          <button type="button" onClick={onBack} className="clay-btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
 export default function ModuleDetailPage() {
   const { number } = useParams()
   const [module, setModule] = useState<ModuleDetail | null>(null)
   const [selectedPI, setSelectedPI] = useState<PIDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [addingContent, setAddingContent] = useState(false)
 
   const load = () => {
     setError(null)
@@ -60,9 +138,23 @@ export default function ModuleDetailPage() {
         <div className="lg:col-span-2">
           {selectedPI ? (
             selectedPI.chunks.length === 0 ? (
-              <div className="clay-card text-center text-clay-text/50">
-                No content yet. Add study content for this performance indicator.
-              </div>
+              addingContent ? (
+                <AddContentForm
+                  piId={selectedPI.id}
+                  onAdded={() => {
+                    setAddingContent(false)
+                    load()
+                  }}
+                  onBack={() => setAddingContent(false)}
+                />
+              ) : (
+                <div className="clay-card text-center text-clay-text/50">
+                  <p>No content yet. Add study content for this performance indicator.</p>
+                  <button onClick={() => setAddingContent(true)} className="clay-btn mt-3">
+                    Add Content
+                  </button>
+                </div>
+              )
             ) : (
               <div className="space-y-4">
                 <h2 className="text-lg font-semibold text-clay-text">

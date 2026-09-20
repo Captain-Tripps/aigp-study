@@ -65,11 +65,18 @@ export default function ContentEditorPage() {
   const save = async () => {
     if (!chunk) return
     setSaving(true)
-    await fetch(`/api/content/${chunk.id}`, {
+    setError(null)
+    const res = await fetch(`/api/content/${chunk.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ editedContent, metadata }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      setSaving(false)
+      return
+    }
     setSaving(false)
     load()
   }

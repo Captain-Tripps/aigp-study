@@ -48,6 +48,9 @@ model Competency {
   examDomainId          Int
   examDomain            ExamDomain             @relation(fields: [examDomainId], references: [id])
   performanceIndicators PerformanceIndicator[]
+
+  @@index([trainingModuleId])
+  @@index([examDomainId])
 }
 
 model PerformanceIndicator {
@@ -60,6 +63,8 @@ model PerformanceIndicator {
   questions     Question[]
   flashcards    Flashcard[]
   userProgress  UserProgress?
+
+  @@index([competencyId])
 }
 
 model ContentChunk {
@@ -77,6 +82,8 @@ model ContentChunk {
   editedAt               DateTime?
   metadata               String?
   revisions              ContentChunkRevision[]
+
+  @@index([performanceIndicatorId])
 }
 
 model ContentChunkRevision {
@@ -87,6 +94,8 @@ model ContentChunkRevision {
   metadata            String?
   previousContent     String
   createdAt           DateTime       @default(now())
+
+  @@index([contentChunkId])
 }
 
 model UserProgress {
@@ -117,6 +126,10 @@ model Question {
   trainingModule         TrainingModule?      @relation(fields: [trainingModuleId], references: [id])
   difficulty             String               @default("medium")
   attempts               QuestionAttempt[]
+
+  @@index([performanceIndicatorId])
+  @@index([examDomainId])
+  @@index([trainingModuleId])
 }
 
 model QuestionAttempt {
@@ -126,6 +139,8 @@ model QuestionAttempt {
   selectedAnswer Int
   wasCorrect Boolean
   answeredAt DateTime @default(now())
+
+  @@index([questionId])
 }
 
 model Flashcard {
@@ -138,6 +153,8 @@ model Flashcard {
   interval               Int                  @default(0)
   nextReviewDate         DateTime?
   reviewCount            Int                  @default(0)
+
+  @@index([performanceIndicatorId])
 }
 
 model StudyPlan {

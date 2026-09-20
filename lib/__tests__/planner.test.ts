@@ -17,6 +17,19 @@ describe('generatePlan', () => {
     expect(allModules.size).toBe(7)
   })
 
+  it('should not assign the same module to non-consecutive weeks', () => {
+    const examDate = new Date('2026-12-01')
+    const plan = generatePlan(examDate, 10)
+    for (const m of new Set(plan.weeks.flatMap((w) => w.modules.map((x) => x.number)))) {
+      const weeksWithModule = plan.weeks
+        .filter((w) => w.modules.some((x) => x.number === m))
+        .map((w) => w.week)
+      for (let i = 1; i < weeksWithModule.length; i++) {
+        expect(weeksWithModule[i] - weeksWithModule[i - 1]).toBe(1)
+      }
+    }
+  })
+
   it('should set domain milestones with increasing readiness', () => {
     const examDate = new Date('2026-12-01')
     const plan = generatePlan(examDate, 10)

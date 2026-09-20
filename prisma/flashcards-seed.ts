@@ -14,9 +14,20 @@ const flashcards = [
 ]
 
 async function main() {
+  let created = 0
+  let skipped = 0
+
   for (const fc of flashcards) {
     const pi = await prisma.performanceIndicator.findUnique({ where: { code: fc.pi } })
     if (!pi) continue
+
+    const existing = await prisma.flashcard.findFirst({
+      where: { front: fc.front, performanceIndicatorId: pi.id },
+    })
+    if (existing) {
+      skipped++
+      continue
+    }
 
     await prisma.flashcard.create({
       data: {
@@ -25,10 +36,11 @@ async function main() {
         performanceIndicatorId: pi.id,
       },
     })
+    created++
   }
 
   const count = await prisma.flashcard.count()
-  console.log(`Seeded ${count} flashcards`)
+  console.log(`Seeded ${created} flashcards (skipped ${skipped} existing, ${count} total)`)
 }
 
 main().catch((e) => { console.error(e); process.exit(1) }).finally(async () => { await prisma.$disconnect() })

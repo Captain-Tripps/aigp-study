@@ -19,9 +19,16 @@ export default function FlashcardsPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [revealed, setRevealed] = useState(false)
   const [reviewed, setReviewed] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
   const loadCards = useCallback(async () => {
+    setError(null)
     const res = await fetch('/api/flashcards')
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      return
+    }
     const data = await res.json()
     setCards(data)
     setCurrentIndex(0)
@@ -34,12 +41,18 @@ export default function FlashcardsPage() {
   const handleRate = async (quality: number) => {
     const card = cards[currentIndex]
     if (!card) return
+    setError(null)
 
-    await fetch('/api/flashcards/review', {
+    const res = await fetch('/api/flashcards/review', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ flashcardId: card.id, quality }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => null)
+      setError(err?.error || `Request failed (HTTP ${res.status})`)
+      return
+    }
 
     setReviewed((prev) => prev + 1)
     setRevealed(false)
@@ -65,7 +78,14 @@ export default function FlashcardsPage() {
         </p>
       </div>
 
-      {currentCard ? (
+      {error ? (
+        <div className="clay-card text-center">
+          <p className="text-clay-danger">{error}</p>
+          <button onClick={loadCards} className="clay-btn mt-3">
+            Retry
+          </button>
+        </div>
+      ) : currentCard ? (
         <CardFlip card={currentCard} onRate={handleRate} revealed={revealed} />
       ) : (
         <div className="clay-card text-clay-text/50">
