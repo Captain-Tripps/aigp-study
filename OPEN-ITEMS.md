@@ -30,24 +30,21 @@ The TipTap editor is functional but thin. Enrich with:
 
 The current export/import flow does not preserve all fields faithfully. A round-trip (export → import) should produce an identical database state. **Fixed (2026-09-20):** Import route rewritten to handle all 8 tables in dependency order with ID remapping (old→new maps for auto-incremented PKs). Upsert on natural keys for idempotency. Returns per-table counts. Commit: `24acb5c`.
 
-### F-3: FK indexes + bounded queries
+### F-3: FK indexes + bounded queries — [x]
 
-Database queries are missing foreign key indexes and some are unbounded. Add indexes on FK columns and add `LIMIT`/pagination to queries that can return large result sets.
+**Fixed (2026-09-20):** 10 `@@index` directives on FK columns + migration `add_fk_indexes`. Pagination (`page`/`pageSize`) added to questions, flashcards, and revisions routes. Commit: `6d20af3`.
 
-### F-4: res.ok checks + flashcard quality range-check
+### F-4: res.ok checks + flashcard quality range-check — [x]
 
-- Add `res.ok` checks on remaining API fetches that are missing them (defensive error handling)
-- Add range-check on flashcard quality values (valid range: 0, 3, 4, 5)
+**Fixed (2026-09-20):** `res.ok` checks added to practice, flashcards, planner, settings, and editor pages with error states + retry buttons. Flashcard quality validated as integer 0–5. Commit: `6d20af3`.
 
-### F-5: Wire Add Resource button; idempotent seeds; planner dedupe
+### F-5: Wire Add Resource button; idempotent seeds; planner dedupe — [x]
 
-- The "Add Resource" button in the UI is not wired to any API endpoint
-- Seed scripts should be idempotent (safe to run multiple times without duplicating data)
-- Planner should deduplicate study sessions (avoid scheduling the same content twice)
+**Fixed (2026-09-20):** Seeds idempotent (skip existing records). Planner upserts single plan, fixed module distribution `[1,1,1,2,2,3,4,5,6,7]`. New `POST /api/content/add` endpoint + "Add Content" button on module detail page for empty PIs. Commit: `6d20af3`.
 
-### F-6: Portable integration tests
+### F-6: Portable integration tests — [x]
 
-Current integration tests depend on local environment (SQLite file paths, etc.). Make them portable so they can run in CI without environment-specific setup.
+**Fixed (2026-09-20):** `prisma.test.ts` now mock-based (no DB dependency). New `roundtrip.test.ts` tests export/import handlers with mocked Prisma. All 52 tests run in CI without a real database. Commit: `6ec869a`.
 
 ---
 
