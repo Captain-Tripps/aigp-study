@@ -1,15 +1,20 @@
 /**
  * Fix single-newline Markdown formatting in content chunks.
  *
- * Problem: The LLM generated content where bold term definitions
- * (**Term:**) and bullet list items (- **text**) are preceded by a
- * single \n instead of \n\n. In standard Markdown, a single newline
- * does NOT create a line break — items render as the same paragraph.
+ * Problems: The LLM generated content where:
+ *   - Bold term definitions (**Term:**) and bullet items (- text) have
+ *     single \n instead of \n\n → render as same paragraph
+ *   - Practice question options (A. B. C. D.) are on single newlines
+ *   - Some options have doubled prefixes ("A. A)" instead of "A)")
+ *   - "Answer:" line has no blank line before it
  *
- * Fix: Upgrade single \n to \n\n before:
- *   1. **Term:** definitions (bold text followed by colon)
- *   2. - bullet list items
- *   3. ## headings (shouldn't be needed but defensive)
+ * Fixes:
+ *   1. Upgrade single \n to \n\n before **Term:** definitions
+ *   2. Upgrade single \n to \n\n before bullet list items
+ *   3. Defensive: ensure ## headings have \n\n before them
+ *   4. Fix doubled option prefixes: "A. A)" → "A)"
+ *   5. Upgrade single \n to \n\n before practice question options
+ *   6. Ensure blank line before "Answer:" in practice questions
  *
  * Usage: npx tsx scripts/fix-newlines.ts [--dry-run]
  */
@@ -41,6 +46,39 @@ function fixMarkdownNewlines(content: string): { fixed: string; changes: number 
   result = result.replace(/(?<!\n)\n(## )/g, (_match, heading: string) => {
     changes++
     return '\n\n' + heading
+  })
+
+  // 4. Fix doubled option prefixes in practice questions:
+  //    "A. A)" → "A)" and "A. A." → "A."
+  //    The LLM sometimes emits "A. A) text" where "A." is the list marker
+  //    and "A)" is the actual option label. Remove the redundant "X. " prefix.
+  //    Only fires when the outer and inner letters match (e.g. "A. A" but not "A. B").
+  result = result.replace(/([A-D])\.\s+([A-D])[.)](?=\s)/g, (match, outer: string, inner: string) => {
+    if (outer === inner) {
+      changes++
+      return inner + (match[match.length - 1] === ')' ? ')' : '.')
+    }
+    return match
+  })
+
+  // 5. Upgrade single \n to \n\n before practice question options
+  //    Only in the "## Practice Question" section to avoid false positives.
+  //    Pattern: single \n followed by "X. " or "X)" at line start
+  const pqIdx = result.indexOf('## Practice Question')
+  if (pqIdx !== -1) {
+    const before = result.substring(0, pqIdx)
+    const section = result.substring(pqIdx)
+    const fixedSection = section.replace(/(?<!\n)\n([A-D])[.)]\s/g, (_match, letter: string) => {
+      changes++
+      return '\n\n' + letter + '. '
+    })
+    result = before + fixedSection
+  }
+
+  // 6. Ensure blank line before "Answer:" in practice questions
+  result = result.replace(/(?<!\n)\n(Answer:)/g, (_match, ans: string) => {
+    changes++
+    return '\n\n' + ans
   })
 
   // Clean up any accidental triple+ newlines down to double
