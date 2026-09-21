@@ -13,6 +13,8 @@ interface LLMResponse {
   question: { stem: string; options: string[]; answer: string; rationale: string }
 }
 
+const PLAYBOOK_URL = 'https://aigpplaybook.com/aigp-study-guide/'
+
 function buildPrompt(
   piCode: string,
   piDescription: string,
@@ -22,6 +24,9 @@ function buildPrompt(
 ): string {
   return `You are an expert on the IAPP AIGP (AI Governance Professional) certification exam.
 
+Your primary study resource is the AIGP Playbook study guide at ${PLAYBOOK_URL}.
+Use its domain breakdown, key concepts, and practical guidance to ground your content.
+
 Generate study content for this specific Performance Indicator:
 - PI Code: ${piCode}
 - PI Description: ${piDescription}
@@ -30,8 +35,8 @@ Generate study content for this specific Performance Indicator:
 
 Return JSON with exactly these fields:
 {
-  "summary": "2-3 paragraphs in plain language for a non-technical privacy professional explaining this specific PI. No jargon without explanation.",
-  "terms": [{"term": "Key Term", "definition": "1-sentence definition aligned with IAPP AIGP framing"}],
+  "summary": "2-3 paragraphs in plain language for a non-technical privacy professional explaining this specific PI. Reference concepts from the AIGP Playbook study guide where relevant. No jargon without explanation.",
+  "terms": [{"term": "Key Term", "definition": "1-sentence definition aligned with IAPP AIGP framing and AIGP Playbook terminology"}],
   "misconceptions": [{"misconception": "Common wrong belief", "correction": "Why it's wrong and what the exam expects"}],
   "question": {"stem": "Question text", "options": ["A text", "B text", "C text", "D text"], "answer": "C", "rationale": "one-line why"}
 }
@@ -40,7 +45,7 @@ Counts: 3-5 terms, 1-2 misconceptions, exactly 1 question.
 
 Rules:
 - Focus specifically on this PI, not the whole competency
-- Align definitions with IAPP AIGP framing, not generic ML terminology
+- Align definitions with IAPP AIGP framing and AIGP Playbook terminology, not generic ML terminology
 - The question should test understanding of this specific PI, not memorization
 - Keep all text concise and exam-focused
 - Respond with the JSON object only — no markdown, no code fences, no commentary`
@@ -106,7 +111,7 @@ async function callLLM(prompt: string): Promise<LLMResponse> {
         {
           role: 'system',
           content:
-            'You are an expert on the IAPP AIGP certification exam. You always respond with valid JSON only — no markdown, no code fences, no commentary.',
+            `You are an expert on the IAPP AIGP certification exam. Your primary study resource is the AIGP Playbook study guide at ${PLAYBOOK_URL}. Ground your content in its domain breakdown and practical guidance. You always respond with valid JSON only — no markdown, no code fences, no commentary.`,
         },
         { role: 'user', content: prompt },
       ],
