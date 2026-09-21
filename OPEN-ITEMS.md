@@ -111,12 +111,14 @@ The manual visual checklist from Task 11 (screenshots, WCAG contrast spot-check 
 
 Content generated on 2026-09-20 against `gpt-oss-120b` on the Zeus GPU server (`100.125.83.77:8080`).
 
-- [x] Run content generation for all PIs — 491/491 PIs have manual content chunks (per-PI generation)
+- [x] BOK clean rebuild — 13 competencies, 58 PIs (verbatim BOK v2.1 wording), 58 content chunks generated
+- [x] Run content generation for all PIs — 58/58 PIs have manual content chunks (per-PI, AIGP Playbook-referenced prompts)
 - [ ] Verify generated content quality — human review pending
-- [x] Seed the database with generated content — 491 per-PI chunks + 646 PDF-sourced chunks, all linked to their PI
-- [x] PI consolidation — 1,231 raw PIs consolidated to 491 via 4-tier fragment detection (`scripts/consolidate-pis.ts`)
+- [x] Markdown newline fixes applied — 271 fixes across 58 chunks (`scripts/fix-newlines.ts`)
 
-**Scripts:** `generate-content.ts` (competency-level), `generate-content-per-pi.ts` (per-PI, the one used), `consolidate-pis.ts` (4-tier merge). `escapeControlCharsInJsonStrings()` handles LLMs emitting raw newlines in JSON.
+**Structure:** 7 modules → 13 competencies → 58 PIs → 58 content chunks. Old 491-PI PDF-derived structure wiped and replaced with BOK-aligned structure.
+
+**Scripts:** `bok-seed.ts` (BOK structure seed), `generate-content-per-pi.ts` (per-PI content gen), `fix-newlines.ts` (Markdown formatting). `escapeControlCharsInJsonStrings()` handles LLMs emitting raw newlines in JSON.
 
 ---
 
