@@ -1,0 +1,132 @@
+[
+  {
+    "number": 1,
+    "domain": "DOMAIN 10 · GENERATIVE AI",
+    "stem": "A financial services firm needs to generate insurance quotes that must be accurate, consistent, explainable, and comply with specific regulatory requirements. The underlying eligibility rules are well-defined. A developer proposes using a large language model (LLM) with RAG for this use case. What is the BEST assessment?",
+    "options": {
+      "A": "Appropriate - RAG provides access to current regulatory data and produces accurate outputs",
+      "B": "Inappropriate - an expert system is better suited because it produces deterministic, auditable outputs for regulated rule-based decisions",
+      "C": "Appropriate - LLMs can be fine-tuned to follow regulatory rules precisely",
+      "D": "Inappropriate - only human underwriters should make insurance decisions"
+    },
+    "answer": "B",
+    "rationale": "Expert systems produce deterministic, fully auditable outputs for structured rule-based decisions; LLMs are unsuitable for regulated insurance eligibility work."
+  },
+  {
+    "number": 2,
+    "domain": "DOMAIN 3 · AI FAIRNESS",
+    "stem": "A resume screening AI systematically ranks male candidates higher than equally qualified female candidates. Investigation reveals the model was trained on ten years of historical hiring decisions. What is the PRIMARY cause?",
+    "options": {
+      "A": "The model lacks an explainability module",
+      "B": "Historical bias encoded in the training data reflects past discriminatory hiring practices",
+      "C": "Human reviewers overrode the model's outputs after deployment",
+      "D": "The organization did not conduct fairness testing before deployment"
+    },
+    "answer": "B",
+    "rationale": "Historical hiring decisions encoded past discriminatory patterns; training on this data caused the model to learn and replicate those patterns at scale."
+  },
+  {
+    "number": 3,
+    "domain": "DOMAIN 2 · GDPR",
+    "stem": "A company's AI chatbot collects conversation data from users. Under GDPR's automated decision-making transparency requirements, what must the company proactively disclose to users BEFORE they interact with the chatbot?",
+    "options": {
+      "A": "The complete technical specification of how the chatbot's model was trained",
+      "B": "The existence of automated decision-making, meaningful information about the logic, and significance of outcomes",
+      "C": "The names of all third-party data processors who may handle the conversation data",
+      "D": "A full list of every data point the chatbot may collect during the conversation"
+    },
+    "answer": "B",
+    "rationale": "Articles 13(2)(f) and 14(2)(g) require proactive disclosure of three elements before interaction: existence of automated decision-making, meaningful logic information, and significance of outcomes."
+  },
+  {
+    "number": 4,
+    "domain": "DOMAIN 7 · VENDOR RISK",
+    "stem": "An organization is procuring an AI hiring tool to be used across operations in five countries. What step should occur BEFORE selecting a vendor?",
+    "options": {
+      "A": "Early commercial negotiation with preferred vendors",
+      "B": "Legal review of employment and AI regulations across all relevant jurisdictions",
+      "C": "Immediate pilot deployment to test real-world performance",
+      "D": "Vendor briefing on internal HR processes"
+    },
+    "answer": "B",
+    "rationale": "Jurisdictional legal review precedes vendor selection; EU AI Act, NYC Local Law 144, and national employment laws determine what the tool must do before vendor quality is evaluated."
+  },
+  {
+    "number": 5,
+    "domain": "DOMAIN 9 · REGULATORY LANDSCAPE",
+    "stem": "Under the OECD AI Policy Framework, where do conformity testing and AI certification schemes fall?",
+    "options": {
+      "A": "Soft-law instruments",
+      "B": "Regulatory instruments",
+      "C": "Technical assessment tools",
+      "D": "Educational instruments"
+    },
+    "answer": "C",
+    "rationale": "The OECD AI Policy Framework classifies conformity testing and AI certification schemes as technical assessment tools."
+  },
+  {
+    "number": 6,
+    "domain": "DOMAIN 7 · VENDOR RISK",
+    "stem": "An organization is evaluating a third-party AI vendor for a high-stakes HR application. The vendor claims their system 'has been independently audited.' What is the MOST IMPORTANT first step before signing a contract?",
+    "options": {
+      "A": "Ask the vendor for three client references who can vouch for the system's performance",
+      "B": "Review the vendor's Acceptable Use Policy to determine if the intended use is permitted",
+      "C": "Request the independent audit report and supporting technical documentation",
+      "D": "Have your legal team review the service level agreement terms"
+    },
+    "answer": "B",
+    "rationale": "Review the AUP first; if it prohibits the intended HR use case, audit reports, SLAs, and client references become irrelevant."
+  },
+  {
+    "number": 7,
+    "domain": "DOMAIN 5 · AI LIFECYCLE",
+    "stem": "During a governance review, a team needs to understand why an AI system makes specific decisions and how the model was designed. Which artifact is MOST useful for this purpose?",
+    "options": {
+      "A": "Governance committee charter",
+      "B": "Full lifecycle documentation including model card",
+      "C": "Public-facing ethical principles statement",
+      "D": "Staff training completion records"
+    },
+    "answer": "B",
+    "rationale": "Model cards and lifecycle documentation capture design decisions, data characteristics, subgroup performance metrics, and known limitations; they are the authoritative artifacts for understanding AI decisions."
+  },
+  {
+    "number": 8,
+    "domain": "DOMAIN 5 · AI LIFECYCLE",
+    "stem": "A governance team is evaluating candidate AI use cases. Which selection criterion is LEAST relevant to an AI governance assessment?",
+    "options": {
+      "A": "User profile and who will be affected by the system",
+      "B": "Harm analysis and potential negative impacts",
+      "C": "Fair access to the system's benefits across groups",
+      "D": "Preferred technology stack of the development team"
+    },
+    "answer": "D",
+    "rationale": "Technology stack preference is an engineering implementation choice with no bearing on whether a use case is appropriate to pursue or how it should be governed."
+  },
+  {
+    "number": 9,
+    "domain": "DOMAIN 4 · NIST AI RMF",
+    "stem": "An organization is establishing its approach to AI risk management. The CISO proposes that since they manage cybersecurity risk well, their existing security risk framework can be directly applied to AI risk. What is the MOST IMPORTANT gap this approach fails to address?",
+    "options": {
+      "A": "AI systems require more frequent security patching than traditional software",
+      "B": "AI risk includes fairness, bias, and autonomy dimensions that go beyond cybersecurity",
+      "C": "The NIST AI RMF requires a completely separate team from cybersecurity",
+      "D": "AI vendors must be certified before the framework can be applied"
+    },
+    "answer": "B",
+    "rationale": "AI risk includes fairness, bias, autonomy, and explainability that cybersecurity frameworks never address; applying a security lens to AI governance leaves critical domains unmanaged."
+  },
+  {
+    "number": 10,
+    "domain": "DOMAIN 3 · AI FAIRNESS",
+    "stem": "A regional hospital's AI triage tool performs well across all patient groups except elderly patients, where its recommendations differ substantially from experienced clinicians. The training dataset was derived from ten years of anonymized patient records. What is the MOST LIKELY cause?",
+    "options": {
+      "A": "The test environment servers lacked processing capacity",
+      "B": "Historical records contain fewer elderly patient cases, causing underrepresentation",
+      "C": "The mobile app UI was inaccessible to elderly users",
+      "D": "Clinical staff were not provided with the model card"
+    },
+    "answer": "B",
+    "rationale": "Elderly patients are underrepresented in digital clinical records from earlier periods; the model performs well where it trained frequently and poorly where it rarely encountered examples."
+  }
+]
