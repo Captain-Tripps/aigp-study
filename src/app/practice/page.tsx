@@ -108,7 +108,7 @@ export default function PracticePage() {
           <p className="text-sm text-clay-text/50">
             Question {currentIndex + 1} of {questions.length}
           </p>
-          <QuestionCard question={currentQ} onAnswer={handleAnswer} />
+          <QuestionCard key={currentQ.id} question={currentQ} onAnswer={handleAnswer} />
           {answered.total > 0 && currentIndex < questions.length - 1 && (
             <button
               onClick={nextQuestion}
