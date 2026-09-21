@@ -3,7 +3,13 @@ import remarkGfm from 'remark-gfm'
 import Link from 'next/link'
 import type { ChunkDetail } from '@/types/study'
 
-export function ContentPanel({ chunks }: { chunks: ChunkDetail[] }) {
+interface ContentPanelProps {
+  chunks: ChunkDetail[]
+  moduleNumber?: number
+  competencyId?: number
+}
+
+export function ContentPanel({ chunks, moduleNumber, competencyId }: ContentPanelProps) {
   if (chunks.length === 0) {
     return (
       <div className="clay-card text-center text-sm text-clay-text/50">
@@ -38,7 +44,7 @@ export function ContentPanel({ chunks }: { chunks: ChunkDetail[] }) {
                 </span>
               )}
               <Link
-                href={`/content/editor/${chunk.id}`}
+                href={`/content/editor/${chunk.id}?module=${moduleNumber ?? ''}&comp=${competencyId ?? ''}`}
                 className="clay-btn-secondary rounded-clay-xs px-3 py-1 text-xs"
               >
                 Edit

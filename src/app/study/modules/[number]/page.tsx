@@ -160,7 +160,11 @@ export default function ModuleDetailPage() {
                 <h2 className="text-lg font-semibold text-clay-text">
                   <span className="font-mono font-medium text-clay-primary">{selectedPI.code}</span> — {selectedPI.description}
                 </h2>
-                <ContentPanel chunks={selectedPI.chunks} />
+                <ContentPanel
+                  chunks={selectedPI.chunks}
+                  moduleNumber={module.number}
+                  competencyId={selectedPI.competencyId}
+                />
                 <ProgressActions
                   piId={selectedPI.id}
                   progress={selectedPI.progress}

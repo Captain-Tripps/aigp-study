@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { RichEditor } from '@/components/editor/RichEditor'
 import { MetadataPanel } from '@/components/editor/MetadataPanel'
 import { RevisionHistory } from '@/components/editor/RevisionHistory'
@@ -31,11 +31,32 @@ interface Metadata {
 
 export default function ContentEditorPage() {
   const { chunkId } = useParams()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const moduleNum = searchParams.get('module') || ''
+  const compId = searchParams.get('comp') || ''
   const [chunk, setChunk] = useState<ContentChunkDetail | null>(null)
   const [editedContent, setEditedContent] = useState('')
   const [metadata, setMetadata] = useState<Metadata>({})
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const backHref = moduleNum && compId
+    ? `/study/modules/${moduleNum}?pi=${compId}`
+    : null
+
+  const handleBack = () => {
+    if (backHref) {
+      router.push(backHref)
+    } else {
+      // No context — fall back to browser history, then the study page
+      if (window.history.length > 1) {
+        router.back()
+      } else {
+        router.push('/study')
+      }
+    }
+  }
 
   const load = () => {
     setError(null)
@@ -95,14 +116,19 @@ export default function ContentEditorPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm font-semibold text-clay-primary">
-          {chunk.performanceIndicator.code} — {chunk.performanceIndicator.description}
-        </p>
-        <h1 className="text-2xl font-bold text-clay-text">{chunk.title}</h1>
-        {chunk.sourcePage && (
-          <p className="text-sm text-clay-text/50">Source: PDF page {chunk.sourcePage}</p>
-        )}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold text-clay-primary">
+            {chunk.performanceIndicator.code} — {chunk.performanceIndicator.description}
+          </p>
+          <h1 className="text-2xl font-bold text-clay-text">{chunk.title}</h1>
+          {chunk.sourcePage && (
+            <p className="text-sm text-clay-text/50">Source: PDF page {chunk.sourcePage}</p>
+          )}
+        </div>
+        <button onClick={handleBack} className="clay-btn-secondary shrink-0">
+          &larr; Back
+        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

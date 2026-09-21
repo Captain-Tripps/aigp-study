@@ -39,6 +39,7 @@ export async function GET(
         id: pi.id,
         code: pi.code,
         description: pi.description,
+        competencyId: c.id,
           chunks: pi.contentChunks.map((ch) => ({
             id: ch.id,
             type: ch.type,

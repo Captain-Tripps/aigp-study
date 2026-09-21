@@ -23,6 +23,7 @@ export interface PIDetail {
   id: number
   code: string
   description: string
+  competencyId: number
   chunks: ChunkDetail[]
   progress: { status: string; confidence: number } | null
 }
