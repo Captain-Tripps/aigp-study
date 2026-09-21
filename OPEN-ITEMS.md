@@ -112,13 +112,16 @@ The manual visual checklist from Task 11 (screenshots, WCAG contrast spot-check 
 Content generated on 2026-09-20 against `gpt-oss-120b` on the Zeus GPU server (`100.125.83.77:8080`).
 
 - [x] BOK clean rebuild — 13 competencies, 58 PIs (verbatim BOK v2.1 wording), 58 content chunks generated
-- [x] Run content generation for all PIs — 58/58 PIs have manual content chunks (per-PI, AIGP Playbook-referenced prompts)
+- [x] Playbook article scraping — 7 articles fetched from aigpplaybook.com, embedded in `scripts/playbook-content.ts`
+- [x] PI-to-source mapping — all 58 PIs mapped to 1-2 source articles (min 5,562 chars, max 15,699 chars grounding per PI)
+- [x] Source-grounded content generation — 58/58 PIs regenerated with actual Playbook article text injected into prompts
+- [x] Deep-dive content structure — each chunk has 6 sections: Plain-Language Summary, Key Exam Concepts, Key Terms, Common Exam Misconceptions, Real-World Scenario, Practice Question
 - [ ] Verify generated content quality — human review pending
-- [x] Markdown newline fixes applied — 271 fixes across 58 chunks (`scripts/fix-newlines.ts`)
+- [x] Markdown formatting fixes — 842 fixes across 58 chunks (`scripts/fix-newlines.ts`)
 
-**Structure:** 7 modules → 13 competencies → 58 PIs → 58 content chunks. Old 491-PI PDF-derived structure wiped and replaced with BOK-aligned structure.
+**Structure:** 7 modules → 13 competencies → 58 PIs → 58 content chunks (~5,000-7,000 chars each, source-grounded).
 
-**Scripts:** `bok-seed.ts` (BOK structure seed), `generate-content-per-pi.ts` (per-PI content gen), `fix-newlines.ts` (Markdown formatting). `escapeControlCharsInJsonStrings()` handles LLMs emitting raw newlines in JSON.
+**Scripts:** `bok-seed.ts` (BOK structure seed), `playbook-content.ts` (scraped articles + PI mapping), `generate-content-per-pi.ts` (source-grounded per-PI gen, supports `--only` and `--overwrite`), `fix-newlines.ts` (Markdown formatting).
 
 ---
 

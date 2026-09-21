@@ -1,19 +1,42 @@
+/**
+ * Per-PI content generation — source-grounded.
+ *
+ * Unlike the original version (which told the LLM to "reference" the
+ * AIGP Playbook URL — a URL it cannot actually read), this version injects
+ * the actual Playbook article content relevant to each PI into the prompt.
+ * This is what produces deep, exam-focused study material instead of
+ * generic summaries.
+ *
+ * Usage:
+ *   npx tsx scripts/generate-content-per-pi.ts              # live
+ *   npx tsx scripts/generate-content-per-pi.ts --dry-run    # no writes
+ *   npx tsx scripts/generate-content-per-pi.ts --overwrite  # regenerate existing chunks
+ */
 import { prisma } from '../lib/prisma'
+import { buildSourceGrounding, sourceCharCount, PI_SOURCES } from './playbook-content'
 
 const LLM_URL = process.env.LLM_URL || 'http://100.125.83.77:8080/v1/chat/completions'
 const LLM_MODEL = process.env.LLM_MODEL || 'gpt-oss-120b'
 
 const DRY_RUN = process.argv.includes('--dry-run')
-const DELAY_MS = 1000
+const OVERWRITE = process.argv.includes('--overwrite')
+const DELAY_MS = 1500
+
+// --only CODE[,CODE2,...] to generate only specific PIs
+const onlyFlag = process.argv.indexOf('--only')
+const ONLY_CODES: string[] | null =
+  onlyFlag !== -1 && process.argv[onlyFlag + 1]
+    ? process.argv[onlyFlag + 1].split(',')
+    : null
 
 interface LLMResponse {
   summary: string
+  keyConcepts: string
   terms: { term: string; definition: string }[]
   misconceptions: { misconception: string; correction: string }[]
+  scenario: string
   question: { stem: string; options: string[]; answer: string; rationale: string }
 }
-
-const PLAYBOOK_URL = 'https://aigpplaybook.com/aigp-study-guide/'
 
 function buildPrompt(
   piCode: string,
@@ -22,32 +45,38 @@ function buildPrompt(
   competencyTitle: string,
   moduleTitle: string,
 ): string {
+  const grounding = buildSourceGrounding(piCode)
+
   return `You are an expert on the IAPP AIGP (AI Governance Professional) certification exam.
 
-Your primary study resource is the AIGP Playbook study guide at ${PLAYBOOK_URL}.
-Use its domain breakdown, key concepts, and practical guidance to ground your content.
-
-Generate study content for this specific Performance Indicator:
+Generate DEEP, exam-focused study content for this specific Performance Indicator:
 - PI Code: ${piCode}
 - PI Description: ${piDescription}
 - Competency: ${competencyCode} — ${competencyTitle}
 - Module: ${moduleTitle}
 
+GROUNDING: The content below is extracted from the AIGP Playbook (aigpplaybook.com), a practitioner-built study resource. Use it as your primary source. Extract specific details, examples, obligations, frameworks, and exam tips from this material. Do NOT produce generic summaries — produce specific, actionable study content that a candidate can use to pass the exam.
+
+${grounding}
+
 Return JSON with exactly these fields:
 {
-  "summary": "2-3 paragraphs in plain language for a non-technical privacy professional explaining this specific PI. Reference concepts from the AIGP Playbook study guide where relevant. No jargon without explanation.",
-  "terms": [{"term": "Key Term", "definition": "1-sentence definition aligned with IAPP AIGP framing and AIGP Playbook terminology"}],
-  "misconceptions": [{"misconception": "Common wrong belief", "correction": "Why it's wrong and what the exam expects"}],
-  "question": {"stem": "Question text", "options": ["A text", "B text", "C text", "D text"], "answer": "C", "rationale": "one-line why"}
+  "summary": "3-4 paragraphs in plain language for a non-technical privacy professional. Cover: (1) what this PI requires and why it matters for the exam, (2) the specific frameworks, regulations, or practices that apply, with concrete details from the source material, (3) how this PI connects to adjacent PIs and the broader exam domain. No jargon without explanation.",
+  "keyConcepts": "2-4 bullet points (each starting with '- ') highlighting the most exam-critical specifics from the source material: exact obligations, specific risk tiers, named framework functions, concrete deadlines, or distinctions that scenario questions test. Each bullet should be 1-2 sentences of dense, specific content.",
+  "terms": [{"term": "Key Term", "definition": "1-2 sentence definition with specific detail (e.g., 'the 10^25 FLOPs threshold' not just 'a high compute threshold'). Align with IAPP AIGP framing and AIGP Playbook terminology."}],
+  "misconceptions": [{"misconception": "Common wrong belief", "correction": "Why it's wrong, what the exam expects, and the specific detail that distinguishes right from wrong"}],
+  "scenario": "A 2-3 sentence realistic scenario that a candidate might encounter on the exam, grounded in the specific context of this PI. This is NOT the practice question — it is a standalone scenario that illustrates the PI in practice.",
+  "question": {"stem": "Question text", "options": ["A text", "B text", "C text", "D text"], "answer": "C", "rationale": "2-3 sentence explanation of why the correct answer is right and why each distractor is wrong, referencing specific details from the source material"}
 }
 
-Counts: 3-5 terms, 1-2 misconceptions, exactly 1 question.
+Counts: 4-6 terms, 2-3 misconceptions, exactly 1 question.
 
 Rules:
-- Focus specifically on this PI, not the whole competency
-- Align definitions with IAPP AIGP framing and AIGP Playbook terminology, not generic ML terminology
-- The question should test understanding of this specific PI, not memorization
-- Keep all text concise and exam-focused
+- Focus specifically on THIS PI, not the whole competency
+- Use the specific details from the grounding material: exact obligations, named functions, specific thresholds, concrete examples
+- The question should test understanding of this specific PI through a scenario, not memorization
+- Distinguish this PI from adjacent PIs where they are easily confused
+- Keep all text exam-focused and actionable
 - Respond with the JSON object only — no markdown, no code fences, no commentary`
 }
 
@@ -106,12 +135,12 @@ async function callLLM(prompt: string): Promise<LLMResponse> {
     body: JSON.stringify({
       model: LLM_MODEL,
       temperature: 0.3,
-      max_tokens: 4096,
+      max_tokens: 8192,
       messages: [
         {
           role: 'system',
           content:
-            `You are an expert on the IAPP AIGP certification exam. Your primary study resource is the AIGP Playbook study guide at ${PLAYBOOK_URL}. Ground your content in its domain breakdown and practical guidance. You always respond with valid JSON only — no markdown, no code fences, no commentary.`,
+            `You are an expert on the IAPP AIGP certification exam. You produce deep, specific, exam-focused study content grounded in the AIGP Playbook source material provided in each prompt. You always respond with valid JSON only — no markdown, no code fences, no commentary.`,
         },
         { role: 'user', content: prompt },
       ],
@@ -140,6 +169,8 @@ function buildPIContent(r: LLMResponse): string {
 
   sections.push(`## Plain-Language Summary\n\n${r.summary}`)
 
+  sections.push(`## Key Exam Concepts\n\n${r.keyConcepts}`)
+
   const termLines = r.terms.map((t) => `**${t.term}:** ${t.definition}`)
   sections.push(`## Key Terms\n\n${termLines.join('\n')}`)
 
@@ -147,6 +178,8 @@ function buildPIContent(r: LLMResponse): string {
     (m) => `- **${m.misconception}:** ${m.correction}`,
   )
   sections.push(`## Common Exam Misconceptions\n\n${misconLines.join('\n')}`)
+
+  sections.push(`## Real-World Scenario\n\n${r.scenario}`)
 
   const q = r.question
   const opts = q.options.map((o, j) => `${'ABCD'[j]}. ${o}`).join('\n')
@@ -168,21 +201,38 @@ async function main() {
     orderBy: { code: 'asc' },
   })
 
-  const total = pis.length
-  const alreadyDone = pis.filter((p) => p.contentChunks.length > 0).length
+  // Filter to specific PIs if --only is provided
+  let filtered = pis
+  if (ONLY_CODES) {
+    filtered = pis.filter((p) => ONLY_CODES.includes(p.code))
+    const missing = ONLY_CODES.filter((c) => !pis.find((p) => p.code === c))
+    if (missing.length > 0) {
+      console.log(`WARNING: PI codes not found: ${missing.join(', ')}`)
+    }
+  }
+
+  const total = filtered.length
+  const alreadyDone = filtered.filter((p) => p.contentChunks.length > 0).length
   console.log(`Found ${total} PIs. ${alreadyDone} already have content.`)
-  console.log(`Mode: ${DRY_RUN ? 'DRY RUN (no writes)' : 'LIVE'}`)
+  console.log(`Mode: ${DRY_RUN ? 'DRY RUN (no writes)' : 'LIVE'}${OVERWRITE ? ' (overwrite existing)' : ''}${ONLY_CODES ? ` (only: ${ONLY_CODES.join(', ')})` : ''}`)
+
+  // Report source coverage
+  const unmapped = pis.filter((p) => !PI_SOURCES[p.code])
+  if (unmapped.length > 0) {
+    console.log(`\nWARNING: ${unmapped.length} PIs have no source mapping:`)
+    for (const p of unmapped) console.log(`  - ${p.code}`)
+  }
 
   let ok = 0
   let skipped = 0
   let failed = 0
   const errors: string[] = []
 
-  for (let i = 0; i < pis.length; i++) {
-    const pi = pis[i]
+  for (let i = 0; i < filtered.length; i++) {
+    const pi = filtered[i]
     const code = pi.code
 
-    if (pi.contentChunks.length > 0) {
+    if (pi.contentChunks.length > 0 && !OVERWRITE) {
       skipped++
       continue
     }
@@ -196,23 +246,32 @@ async function main() {
       moduleTitle,
     )
 
-    process.stdout.write(`[${i + 1}/${total}] ${code} ... `)
+    const srcChars = sourceCharCount(code)
+    process.stdout.write(`[${i + 1}/${total}] ${code} (src: ${srcChars} chars) ... `)
 
     try {
       const response = await callLLM(prompt)
       const content = buildPIContent(response)
 
       if (!DRY_RUN) {
-        await prisma.contentChunk.create({
-          data: {
-            title: code,
-            content,
-            sourceType: 'manual',
-            type: 'manual',
-            performanceIndicatorId: pi.id,
-            isEdited: true,
-          },
-        })
+        if (pi.contentChunks.length > 0 && OVERWRITE) {
+          // Update the existing chunk
+          await prisma.contentChunk.update({
+            where: { id: pi.contentChunks[0].id },
+            data: { content, isEdited: true },
+          })
+        } else {
+          await prisma.contentChunk.create({
+            data: {
+              title: code,
+              content,
+              sourceType: 'manual',
+              type: 'manual',
+              performanceIndicatorId: pi.id,
+              isEdited: true,
+            },
+          })
+        }
       }
 
       ok++
@@ -224,7 +283,7 @@ async function main() {
       console.log(`ERROR: ${msg}`)
     }
 
-    if (i < pis.length - 1) {
+    if (i < filtered.length - 1) {
       await new Promise((r) => setTimeout(r, DELAY_MS))
     }
   }
