@@ -15,6 +15,7 @@
  *   4. Fix doubled option prefixes: "A. A)" → "A)"
  *   5. Upgrade single \n to \n\n before practice question options
  *   6. Ensure blank line before "Answer:" in practice questions
+ *   7. Split inline bullets ("- text - text") onto separate lines
  *
  * Usage: npx tsx scripts/fix-newlines.ts [--dry-run]
  */
@@ -79,6 +80,16 @@ function fixMarkdownNewlines(content: string): { fixed: string; changes: number 
   result = result.replace(/(?<!\n)\n(Answer:)/g, (_match, ans: string) => {
     changes++
     return '\n\n' + ans
+  })
+
+  // 7. Split inline bullets onto separate lines with blank lines between them.
+  //    The LLM sometimes emits multiple "- " bullets on a single line
+  //    (e.g., "- bullet one - bullet two - bullet three").
+  //    This inserts \n\n before each inline " - " that starts a new bullet.
+  //    Only fires when the "- " is NOT already at the start of a line.
+  result = result.replace(/(?<=\S) - /g, () => {
+    changes++
+    return '\n\n- '
   })
 
   // Clean up any accidental triple+ newlines down to double
