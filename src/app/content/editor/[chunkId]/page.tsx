@@ -137,13 +137,21 @@ export default function ContentEditorPage() {
         </div>
         <div className="space-y-4">
           <MetadataPanel metadata={metadata} onChange={setMetadata} />
-          <button
-            onClick={save}
-            disabled={saving}
-            className="clay-btn w-full disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={save}
+              disabled={saving}
+              className="clay-btn flex-1 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button
+              onClick={handleBack}
+              className="clay-btn-secondary"
+            >
+              Cancel
+            </button>
+          </div>
           <RevisionHistory chunkId={chunk.id} onReverted={load} />
         </div>
       </div>
